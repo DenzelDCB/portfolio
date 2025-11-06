@@ -7,10 +7,10 @@ body:hover {
   cursor: url('./cursor.jpg'), auto;
 }
 
-button {
+button, a {
   cursor: url('./pointer.jpg'), auto;
 }
 
-button:hover {
+button:hover, a:hover {
   cursor: url('./pointer.jpg'), auto;
 }
