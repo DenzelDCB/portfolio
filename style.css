@@ -1,7 +1,16 @@
 body {
-  cursor: none;
+  cursor: url('./cursor.jpg'), auto;
 }
 
 body:hover {
   cursor: none;
+  cursor: url('./cursor.jpg'), auto;
+}
+
+button {
+  cursor: url('./pointer.jpg'), auto;
+}
+
+button:hover {
+  cursor: url('./pointer.jpg'), auto;
 }
