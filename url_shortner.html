@@ -134,6 +134,7 @@
         function copyToClipboard(text) {
             navigator.clipboard.writeText(text).then(() => {
                 alert('URL copied to clipboard!');
+                window.location.href="https://denzeldcb.github.io/portfolio/url_shortner";
             }).catch(err => {
                 console.error('Failed to copy: ', err);
             });
