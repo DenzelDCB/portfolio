@@ -8,16 +8,6 @@
   background: orange;
 }
 
-body::-moz-selection { /* Code for Firefox */
-  color: black;
-  background: orange;
-}
-
-body::selection {
-  color: black;
-  background: orange;
-}
-
 body {
   cursor: url('./cursorx.png'), auto;
 }
