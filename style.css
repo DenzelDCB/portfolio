@@ -5,3 +5,13 @@ body {
 button, a {
   cursor: url('./pointer.png'), auto;
 }
+
+::-moz-selection { /* Code for Firefox */
+  color: black;
+  background: orange;
+}
+
+::selection {
+  color: black;
+  background: orange;
+}
