@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Maze War: Red & Blue vs Green with Levers & Doors</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #222;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    canvas {
+      border: 5px solid #fff;
+      background-color: #111;
+    }
+  </style>
+</head>
+<body>
+<canvas id="mazeCanvas"></canvas>
+<script>
+const canvas = document.getElementById('mazeCanvas');
+const ctx = canvas.getContext('2d');
+
+const cellSize = 24;
+const cols = 30;
+const rows = 30;
+canvas.width = cols * cellSize;
+canvas.height = rows * cellSize;
+
+const maze = [];
+const stack = [];
+const safeZones = [];
+
+const goal = { x: cols - 1, y: rows - 1 };
+
+const players = {
+  red: { x: 1, y: 1, flashlight: false },
+  blue: { x: 2, y: 1, flashlight: false }
+};
+
+let zombie = {
+  x: Math.floor(cols / 2),
+  y: Math.floor(rows / 2)
+};
+
+const directions = [
+  { x: 0, y: -1 }, // Up
+  { x: 1, y: 0 },  // Right
+  { x: 0, y: 1 },  // Down
+  { x: -1, y: 0 }  // Left
+];
+
+// Lever & Door system
+// Doors block movement between two adjacent cells (between a pair of cells)
+// Doors have an id, and are linked to one lever each
+// Lever toggles door open state permanently once touched
+
+const doors = [
+  // Each door blocks movement between two adjacent cells
+  // Format: { id, cell1: {x,y}, cell2: {x,y}, open: false }
+  // Place doors somewhere in maze so lever toggles them
+
+  // Example door between (10,10) and (11,10)
+  { id: 1, cell1: {x:10, y:10}, cell2: {x:11, y:10}, open: false },
+
+  // Another door
+  { id: 2, cell1: {x:20, y:15}, cell2: {x:20, y:16}, open: false }
+];
+
+const levers = [
+  // Each lever is at a single cell, toggles door by id once touched
+  { x: 9, y: 10, doorId: 1, activated: false },
+  { x: 21, y: 15, doorId: 2, activated: false }
+];
+
+function Cell(x, y) {
+  this.x = x;
+  this.y = y;
+  this.visited = false;
+  this.walls = [true, true, true, true]; // top, right, bottom, left
+  this.isSafe = false;
+  this.isSpawn = false;
+
+  this.draw = function () {
+    const px = this.x * cellSize;
+    const py = this.y * cellSize;
+
+    ctx.fillStyle = '#222';
+    ctx.fillRect(px, py, cellSize, cellSize);
+
+    if (this.isSpawn) {
+      ctx.fillStyle = '#66ff66';
+      ctx.fillRect(px, py, cellSize, cellSize);
+    }
+    if (this.x === goal.x && this.y === goal.y) {
+      ctx.fillStyle = 'gold';
+      ctx.fillRect(px + 2, py + 2, cellSize - 4, cellSize - 4);
+    }
+
+    // Draw walls normally
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2;
+    if (this.walls[0]) ctx.beginPath(), ctx.moveTo(px, py), ctx.lineTo(px + cellSize, py), ctx.stroke();
+    if (this.walls[1]) ctx.beginPath(), ctx.moveTo(px + cellSize, py), ctx.lineTo(px + cellSize, py + cellSize), ctx.stroke();
+    if (this.walls[2]) ctx.beginPath(), ctx.moveTo(px + cellSize, py + cellSize), ctx.lineTo(px, py + cellSize), ctx.stroke();
+    if (this.walls[3]) ctx.beginPath(), ctx.moveTo(px, py + cellSize), ctx.lineTo(px, py), ctx.stroke();
+
+    // Draw doors walls thicker and red if closed, on the wall between cell1 and cell2
+    doors.forEach(door => {
+      if (!door.open) {
+        // Check if this cell is one side of door
+        if ((this.x === door.cell1.x && this.y === door.cell1.y) || (this.x === door.cell2.x && this.y === door.cell2.y)) {
+          // Determine which wall to draw thicker red for this door
+          // If cells differ by x (horizontal door)
+          if (door.cell1.y === door.cell2.y) {
+            // door between left/right wall of one cell
+            if (this.x === door.cell1.x && this.y === door.cell1.y) {
+              // right wall of cell1
+              ctx.strokeStyle = 'red';
+              ctx.lineWidth = 4;
+              const wx = px + cellSize;
+              const wy = py;
+              ctx.beginPath();
+              ctx.moveTo(wx, wy);
+              ctx.lineTo(wx, wy + cellSize);
+              ctx.stroke();
+              ctx.strokeStyle = '#fff';
+              ctx.lineWidth = 2;
+            } else if (this.x === door.cell2.x && this.y === door.cell2.y) {
+              // left wall of cell2
+              ctx.strokeStyle = 'red';
+              ctx.lineWidth = 4;
+              const wx = px;
+              const wy = py;
+              ctx.beginPath();
+              ctx.moveTo(wx, wy);
+              ctx.lineTo(wx, wy + cellSize);
+              ctx.stroke();
+              ctx.strokeStyle = '#fff';
+              ctx.lineWidth = 2;
+            }
+          } else if (door.cell1.x === door.cell2.x) {
+            // vertical door between top/bottom walls
+            if (this.x === door.cell1.x && this.y === door.cell1.y) {
+              // bottom wall of cell1
+              ctx.strokeStyle = 'red';
+              ctx.lineWidth = 4;
+              const wx = px;
+              const wy = py + cellSize;
+              ctx.beginPath();
+              ctx.moveTo(wx, wy);
+              ctx.lineTo(wx + cellSize, wy);
+              ctx.stroke();
+              ctx.strokeStyle = '#fff';
+              ctx.lineWidth = 2;
+            } else if (this.x === door.cell2.x && this.y === door.cell2.y) {
+              // top wall of cell2
+              ctx.strokeStyle = 'red';
+              ctx.lineWidth = 4;
+              const wx = px;
+              const wy = py;
+              ctx.beginPath();
+              ctx.moveTo(wx, wy);
+              ctx.lineTo(wx + cellSize, wy);
+              ctx.stroke();
+              ctx.strokeStyle = '#fff';
+              ctx.lineWidth = 2;
+            }
+          }
+        }
+      }
+    });
+
+    // Draw levers as orange squares
+    levers.forEach(lever => {
+      if (lever.x === this.x && lever.y === this.y) {
+        ctx.fillStyle = lever.activated ? '#ffaa00' : '#ff6600';
+        ctx.fillRect(px + 6, py + 6, cellSize - 12, cellSize - 12);
+      }
+    });
+  };
+
+  this.checkNeighbors = function () {
+    const neighbors = [];
+
+    const top = maze[this.y - 1]?.[this.x];
+    const right = maze[this.y]?.[this.x + 1];
+    const bottom = maze[this.y + 1]?.[this.x];
+    const left = maze[this.y]?.[this.x - 1];
+
+    if (top && !top.visited) neighbors.push(top);
+    if (right && !right.visited) neighbors.push(right);
+    if (bottom && !bottom.visited) neighbors.push(bottom);
+    if (left && !left.visited) neighbors.push(left);
+
+    if (neighbors.length > 0) {
+      return neighbors[Math.floor(Math.random() * neighbors.length)];
+    }
+    return undefined;
+  };
+}
+
+function setupMaze() {
+  for (let y = 0; y < rows; y++) {
+    maze[y] = [];
+    for (let x = 0; x < cols; x++) {
+      const cell = new Cell(x, y);
+      // Mark spawn zone as 3x3 top-left
+      if (x <= 2 && y <= 2) {
+        cell.isSpawn = true;
+      }
+      maze[y][x] = cell;
+    }
+  }
+
+  // Place 5 safe zones randomly, avoiding spawn and goal
+  let placedSafeZones = 0;
+  while (placedSafeZones < 5) {
+    let sx = Math.floor(Math.random() * cols);
+    let sy = Math.floor(Math.random() * rows);
+    if (!maze[sy][sx].isSafe && !maze[sy][sx].isSpawn && !(sx === goal.x && sy === goal.y)) {
+      maze[sy][sx].isSafe = true;
+      placedSafeZones++;
+    }
+  }
+
+  // Maze generation start
+  const start = maze[0][0];
+  start.visited = true;
+  stack.push(start);
+}
+
+function generateMaze() {
+  if (stack.length > 0) {
+    const current = stack.pop();
+    const next = current.checkNeighbors();
+
+    if (next) {
+      next.visited = true;
+      stack.push(current);
+      stack.push(next);
+      removeWalls(current, next);
+    }
+  }
+}
+
+function removeWalls(a, b) {
+  const dx = a.x - b.x;
+  const dy = a.y - b.y;
+
+  if (dx === 1) { a.walls[3] = false; b.walls[1] = false; }
+  else if (dx === -1) { a.walls[1] = false; b.walls[3] = false; }
+
+  if (dy === 1) { a.walls[0] = false; b.walls[2] = false; }
+  else if (dy === -1) { a.walls[2] = false; b.walls[0] = false; }
+}
+
+function drawEntity(x, y) {
+  ctx.fillRect(x * cellSize + 4, y * cellSize + 4, cellSize - 8, cellSize - 8);
+}
+
+function drawPlayers() {
+  ctx.fillStyle = 'red';
+  drawEntity(players.red.x, players.red.y);
+
+  ctx.fillStyle = 'blue';
+  drawEntity(players.blue.x, players.blue.y);
+}
+
+function drawZombie() {
+  ctx.fillStyle = 'lime';
+  drawEntity(zombie.x, zombie.y);
+
+}
+
+function movePlayer(player, dx, dy) {
+  const newX = player.x + dx;
+  const newY = player.y + dy;
+
+  if (newX < 0 || newX >= cols || newY < 0 || newY >= rows) return;
+
+  // Check for walls in current cell blocking movement
+  const cell = maze[player.y][player.x];
+
+  // Check door blocking movement between current and new cell
+  if (isDoorClosedBetween(player.x, player.y, newX, newY)) return;
+
+  if ((dx === -1 && !cell.walls[3]) ||
+      (dx === 1 && !cell.walls[1]) ||
+      (dy === -1 && !cell.walls[0]) ||
+      (dy === 1 && !cell.walls[2])) {
+    player.x = newX;
+    player.y = newY;
+
+    checkLeverActivation(player);
+  }
+}
+
+function isDoorClosedBetween(x1, y1, x2, y2) {
+  for (const door of doors) {
+    if (
+      ((door.cell1.x === x1 && door.cell1.y === y1 && door.cell2.x === x2 && door.cell2.y === y2) ||
+      (door.cell2.x === x1 && door.cell2.y === y1 && door.cell1.x === x2 && door.cell1.y === y2))
+      && door.open === false
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
+
+
+const buttons = [];
+
+function placeDoorWithMechanisms() {
+  const attempts = 100;
+
+  for (let i = 0; i < attempts; i++) {
+    const x = Math.floor(Math.random() * (cols - 1));
+    const y = Math.floor(Math.random() * rows);
+
+    const cell = getCell(x, y);
+    const nextCell = getCell(x + 1, y);
+
+    if (!cell || !nextCell) continue;
+
+    // Only place a door if both sides are open space (no wall between them)
+    if (!cell.walls[1] && !nextCell.walls[3]) {
+      // Place door
+      doors.push({ x, y, open: false });
+
+      // Place a lever somewhere else the player can reach
+      const leverPlaced = placeLeverAwayFrom(x, y);
+      if (!leverPlaced) {
+        doors.pop(); // Remove door if lever placement fails
+        continue;
+      }
+
+      return; // Only place one for now
+    }
+  }
+}
+
+function placeLeverAwayFrom(doorX, doorY) {
+  for (let i = 0; i < 200; i++) {
+    const lx = Math.floor(Math.random() * cols);
+    const ly = Math.floor(Math.random() * rows);
+    if (Math.abs(lx - doorX) + Math.abs(ly - doorY) > 10) {
+      levers.push({ x: lx, y: ly, activated: false });
+      return true;
+    }
+  }
+  return false;
+}
+
+
+// Lever activation: toggle door open forever on first touch
+function checkLeverActivation(player) {
+  levers.forEach(lever => {
+    if (!lever.activated && player.x === lever.x && player.y === lever.y) {
+      lever.activated = true;
+      // Open door linked to this lever
+      const door = doors.find(d => d.id === lever.doorId);
+      if (door) {
+        door.open = true;
+      }
+    }
+  });
+}
+
+function distance(a, b) {
+  return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2);
+}
+
+function respawnPlayer(player) {
+  const spawnTiles = [];
+  for (let y = 0; y < rows; y++) {
+    for (let x = 0; x < cols; x++) {
+      if (maze[y][x].isSpawn) spawnTiles.push({ x, y });
+    }
+  }
+  if (spawnTiles.length > 0) {
+    const rand = spawnTiles[Math.floor(Math.random() * spawnTiles.length)];
+    player.x = rand.x;
+    player.y = rand.y;
+    player.flashlight = false;
+  } else {
+    player.x = 1;
+    player.y = 1;
+    player.flashlight = false;
+  }
+}
+
+function checkCollisions() {
+  for (let key in players) {
+    const p = players[key];
+    if (p.x === zombie.x && p.y === zombie.y) {
+      respawnPlayer(p);
+    }
+  }
+}
+
+let zombieStepCounter = 0;
+const zombieMoveInterval = 10;
+const zombieSightRange = 6;
+
+function moveZombie() {
+  zombieStepCounter++;
+  if (zombieStepCounter < zombieMoveInterval) return;
+  zombieStepCounter = 0;
+
+  const redDist = distance(zombie, players.red);
+  const blueDist = distance(zombie, players.blue);
+
+  let target = null;
+  if (redDist <= zombieSightRange) target = players.red;
+  if (blueDist <= zombieSightRange && (!target || blueDist < redDist)) target = players.blue;
+
+  if (target) {
+    const path = bfs(zombie, target);
+    if (path && path.length > 1) {
+      // Check if door is open between current and next step, else stay put
+      const nextStep = path[1];
+      if (!isDoorClosedBetween(zombie.x, zombie.y, nextStep.x, nextStep.y)) {
+        zombie.x = nextStep.x;
+        zombie.y = nextStep.y;
+      }
+    }
+  } else {
+    // Random move without doors or safe zones blocking
+    const dirs = [0, 1, 2, 3].sort(() => Math.random() - 0.5);
+    const cell = maze[zombie.y][zombie.x];
+    for (let dir of dirs) {
+      const nx = zombie.x + directions[dir].x;
+      const ny = zombie.y + directions[dir].y;
+      const nx2 = zombie.x2 + directions[dir].x;
+      const ny2 = zombie.y2 + directions[dir].y;
+
+      if (nx >= 0 && nx < cols && ny >= 0 && ny < rows &&
+          !maze[ny][nx].isSafe &&
+          ((dir === 0 && !cell.walls[0]) ||
+           (dir === 1 && !cell.walls[1]) ||
+           (dir === 2 && !cell.walls[2]) ||
+           (dir === 3 && !cell.walls[3])) &&
+          !isDoorClosedBetween(zombie.x, zombie.y, nx, ny)) {
+        zombie.x = nx;
+        zombie.y = ny;
+        break;
+      }
+    }
+  }
+}
+
+function bfs(start, target) {
+  const visited = Array.from({ length: rows }, () => Array(cols).fill(false));
+  const queue = [{ x: start.x, y: start.y, path: [] }];
+  visited[start.y][start.x] = true;
+
+  while (queue.length) {
+    const { x, y, path } = queue.shift();
+    if (x === target.x && y === target.y) return [...path, { x, y }];
+
+    const cell = maze[y][x];
+    directions.forEach((dir, i) => {
+      const nx = x + dir.x, ny = y + dir.y;
+      if (nx >= 0 && ny >= 0 && nx < cols && ny < rows && !visited[ny][nx]) {
+        const canMove =
+          (i === 0 && !cell.walls[0]) ||
+          (i === 1 && !cell.walls[1]) ||
+          (i === 2 && !cell.walls[2]) ||
+          (i === 3 && !cell.walls[3]);
+
+        if (canMove && !maze[ny][nx].isSafe && !isDoorClosedBetween(x, y, nx, ny)) {
+          visited[ny][nx] = true;
+          queue.push({ x: nx, y: ny, path: [...path, { x, y }] });
+        }
+      }
+    });
+  }
+  return null;
+}
+
+const darknessRadius = 2;
+const flashlightRadius = 5;
+const flashlights = [
+  { x: Math.floor(cols * 0.25), y: Math.floor(rows * 0.5), collected: false },
+  { x: Math.floor(cols * 0.75), y: Math.floor(rows * 0.5), collected: false }
+];
+const flashlightHeld = { red: false, blue: false };
+
+const allies = [
+  { x: 3, y: 2 }, { x: 5, y: 4 }, { x: 2, y: 6 },
+  { x: cols - 3, y: rows - 6 }, { x: cols - 5, y: rows - 3 }
+];
+
+function drawFlashlights() {
+  for (let f of flashlights) {
+    if (!f.collected &&
+      ((players.red.x === f.x && players.red.y === f.y) ||
+       (players.blue.x === f.x && players.blue.y === f.y))) {
+      f.collected = true;
+      if (players.red.x === f.x && players.red.y === f.y) flashlightHeld.red = true;
+      if (players.blue.x === f.x && players.blue.y === f.y) flashlightHeld.blue = true;
+    }
+
+    if (!f.collected) {
+      ctx.fillStyle = 'yellow';
+      drawEntity(f.x, f.y);
+    }
+  }
+}
+
+function drawAllies() {
+  for (let a of allies) {
+    ctx.fillStyle = '#ff66cc';
+    ctx.fillRect(a.x * cellSize + 6, a.y * cellSize + 6, cellSize - 12, cellSize - 12);
+  }
+}
+
+function drawWithFog() {
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  for (let y = 0; y < rows; y++) {
+    for (let x = 0; x < cols; x++) {
+      const inRedLight = flashlightHeld.red
+        ? distance(players.red, { x, y }) <= flashlightRadius
+        : distance(players.red, { x, y }) <= darknessRadius;
+
+      const inBlueLight = flashlightHeld.blue
+        ? distance(players.blue, { x, y }) <= flashlightRadius
+        : distance(players.blue, { x, y }) <= darknessRadius;
+
+      if (inRedLight || inBlueLight) {
+        maze[y][x].draw();
+      }
+    }
+  }
+
+  drawFlashlights();
+  drawPlayers();
+  drawZombie();
+}
+
+document.addEventListener('keydown', (e) => {
+  switch (e.key) {
+    case 'ArrowUp': movePlayer(players.red, 0, -1); break;
+    case 'ArrowDown': movePlayer(players.red, 0, 1); break;
+    case 'ArrowLeft': movePlayer(players.red, -1, 0); break;
+    case 'ArrowRight': movePlayer(players.red, 1, 0); break;
+    case 'w': movePlayer(players.blue, 0, -1); break;
+    case 's': movePlayer(players.blue, 0, 1); break;
+    case 'a': movePlayer(players.blue, -1, 0); break;
+    case 'd': movePlayer(players.blue, 1, 0); break;
+  }
+});
+
+function gameLoop() {
+  generateMaze();
+  moveZombie();
+  checkCollisions();
+  drawWithFog();
+  requestAnimationFrame(gameLoop);
+}
+
+setupMaze();
+gameLoop();
+</script>
+</body>
+</html>
