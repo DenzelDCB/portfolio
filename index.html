@@ -3,70 +3,58 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Denzel Babs – Full-Stack Developer & Tech Educator | Building impactful applications and teaching the next generation of coders." />
+  <meta name="description" content="Denzel Babs – Full Stack Developer & Tech Educator | Building impactful apps and teaching the next generation through Grow with Denzel." />
   <meta name="author" content="Denzel Babajide" />
-  
-  <!-- Open Graph / Social -->
   <meta property="og:title" content="Denzel Babs – Full Stack Developer & Educator" />
-  <meta property="og:description" content="Passionate developer and mentor helping young people build real-world apps." />
-  <meta property="og:image" content="https://yourdomain.com/og-image.jpg" />
-  <meta property="og:url" content="https://yourdomain.com" />
+  <meta property="og:description" content="Passionate about clean code, user experience, and empowering young coders." />
+  <meta property="og:image" content="./growwithdenzel_profile-removebg-preview.png" />
+  <meta property="og:url" content="https://denzelbabs.com" />
   <meta property="og:type" content="website" />
 
-  <title>Denzel Babs – Full Stack Developer & Tech Educator</title>
+  <title>Denzel Babs – Full Stack Developer & Educator</title>
 
-  <!-- Tailwind CDN (v3.4+) + DaisyUI for components -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       darkMode: 'class',
       theme: {
         extend: {
-          colors: {
-            primary: '#FF5722',
-            'primary-dark': '#E64A19',
-          },
-          fontFamily: {
-            sans: ['Inter', 'system-ui', 'sans-serif'],
-          },
-          animation: {
-            'fade-in-up': 'fadeInUp 0.7s ease-out forwards',
-          },
-        },
-      },
+          colors: { primary: '#ff5722', 'primary-dark': '#e64a19' },
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+          animation: { 'fade-in': 'fadeIn 0.8s ease-out forwards' }
+        }
+      }
     }
   </script>
-  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
-  <link href="https://rsms.me/inter/inter.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
 
   <style>
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .animate-fade-in-up { opacity: 0; animation: fadeInUp 0.7s ease-out forwards; }
-    .card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
-    .card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.12); }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-in { opacity: 0; }
+    .card-hover { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+    .card-hover:hover { transform: translateY(-12px); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15); }
   </style>
 </head>
 
-<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+<body class="bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors">
 
   <!-- Dark Mode Toggle -->
   <div class="fixed top-6 right-6 z-50">
-    <label class="swap swap-rotate btn btn-ghost btn-circle">
-      <input type="checkbox" id="dark-mode-toggle" class="hidden" />
-      <i class="swap-off fas fa-sun text-xl text-orange-600"></i>
-      <i class="swap-on fas fa-moon text-xl text-blue-400"></i>
+    <label class="swap swap-rotate btn btn-circle btn-ghost">
+      <input type="checkbox" id="theme-toggle" />
+      <i class="swap-off fas fa-sun text-yellow-500 text-2xl"></i>
+      <i class="swap-on fas fa-moon text-indigo-400 text-2xl"></i>
     </label>
   </div>
 
   <!-- Navigation -->
-  <nav class="fixed top-0 w-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg z-40 border-b border-gray-200 dark:border-gray-800">
+  <nav class="fixed top-0 w-full bg-white/90 dark:bg-gray-950/90 backdrop-blur-lg z-40 border-b border-gray-200 dark:border-gray-800">
     <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
-      <a href="#" class="text-2xl font-bold text-primary">Denzel Babs</a>
-      <div class="hidden md:flex items-center gap-10">
+      <a href="#" class="text-2xl font-black text-primary">Denzel Babs</a>
+      <div class="hidden lg:flex items-center gap-10 text-lg font-medium">
         <a href="#home" class="hover:text-primary transition">Home</a>
         <a href="#about" class="hover:text-primary transition">About</a>
         <a href="#projects" class="hover:text-primary transition">Projects</a>
@@ -74,14 +62,12 @@
         <a href="#grow" class="hover:text-primary transition">Grow with Denzel</a>
         <a href="#contact" class="hover:text-primary transition">Contact</a>
       </div>
-      <button class="md:hidden" id="mobile-menu-btn">
-        <i class="fas fa-bars text-2xl"></i>
-      </button>
+      <button id="mobile-btn" class="lg:hidden text-2xl"><i class="fas fa-bars"></i></button>
     </div>
   </nav>
 
   <!-- Mobile Menu -->
-  <div class="fixed inset-0 bg-gray-900/95 backdrop-blur z-30 hidden flex-col items-center justify-center gap-10 text-3xl" id="mobile-menu">
+  <div id="mobile-menu" class="fixed inset-0 bg-gray-950/95 backdrop-blur-xl z-30 hidden flex-col justify-center items-center gap-10 text-3xl font-bold">
     <a href="#home" class="hover:text-primary">Home</a>
     <a href="#about" class="hover:text-primary">About</a>
     <a href="#projects" class="hover:text-primary">Projects</a>
@@ -91,18 +77,18 @@
   </div>
 
   <!-- Hero -->
-  <section id="home" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-500 to-orange-700 text-white relative overflow-hidden">
+  <section id="home" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-500 via-orange-600 to-red-600 text-white relative">
     <div class="absolute inset-0 bg-black/20"></div>
     <div class="relative z-10 text-center px-6 max-w-5xl mx-auto">
-      <img src="./growwithdenzel_profile-removebg-preview.png" alt="Denzel Babs" class="w-40 h-40 rounded-full mx-auto mb-8 shadow-2xl border-4 border-white/30" loading="lazy" />
-      <h1 class="text-5xl md:text-7xl font-extrabold mb-4">Denzel Babs</h1>
-      <p class="text-2xl md:text-3xl font-light mb-8 opacity-90">Full Stack Developer & Tech Educator</p>
-      <p class="text-lg md:text-xl max-w-3xl mx-auto mb-10 leading-relaxed opacity-90">
-        Crafting modern digital experiences and empowering the next generation of builders through mentorship and real-world projects.
+      <img src="./growwithdenzel_profile-removebg-preview.png" alt="Denzel Babs" class="w-40 h-40 rounded-full mx-auto mb-8 border-8 border-white/30 shadow-2xl" loading="lazy" />
+      <h1 class="text-5xl md:text-7xl font-black mb-6">Denzel Babs</h1>
+      <p class="text-2xl md:text-3xl font-medium mb-8 opacity-95">Full Stack Developer & Tech Educator</p>
+      <p class="text-lg md:text-xl max-w-3xl mx-auto leading-relaxed opacity-90">
+        Crafting digital experiences with modern technologies. Passionate about clean code, user experience, and empowering the next generation of coders.
       </p>
-      <div class="flex flex-col sm:flex-row gap-6 justify-center">
-        <a href="#projects" class="btn btn-neutral btn-lg rounded-full shadow-xl">View My Work</a>
-        <a href="#contact" class="btn btn-outline btn-lg rounded-full text-white border-white hover:bg-white hover:text-orange-700">Get In Touch</a>
+      <div class="mt-12 flex flex-col sm:flex-row gap-6 justify-center">
+        <a href="#projects" class="btn btn-lg btn-neutral rounded-full shadow-2xl text-lg font-bold">View My Work</a>
+        <a href="#contact" class="btn btn-lg btn-outline border-2 border-white rounded-full text-white hover:bg-white hover:text-primary">Get In Touch</a>
       </div>
     </div>
   </section>
@@ -111,118 +97,235 @@
   <section id="about" class="py-24 bg-white dark:bg-gray-900">
     <div class="max-w-7xl mx-auto px-6">
       <div class="text-center mb-16">
-        <h2 class="text-5xl font-bold text-primary mb-6">About Me</h2>
+        <h2 class="text-5xl font-black text-primary mb-6">About Me</h2>
         <p class="text-xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed">
-          I started coding at age 6 with Scratch and never stopped. Today, I'm a full-stack developer passionate about clean code, meaningful products, and teaching others how to turn ideas into reality.
+          I’m a passionate coder, reader, and artist who loves to learn new things and share them with others.<br>
+          My journey began early, using Scratch at age 6, and over time I’ve grown into a developer fluent in multiple languages and frameworks.<br>
+          I believe technology is a force for good, that when we build with intention, we can uplift communities and open doors.
         </p>
       </div>
 
-      <div class="grid lg:grid-cols-2 gap-16 items-center">
+      <div class="grid lg:grid-cols-2 gap-16">
         <div>
-          <h3 class="text-3xl font-bold text-primary mb-8">Technologies I Work With</h3>
+          <h3 class="text-3xl font-bold text-primary mb-8">Skills & Technologies</h3>
           <div class="grid grid-cols-3 sm:grid-cols-4 gap-6">
-            <!-- Tech badges -->
-            ${['React', 'Node.js', 'JavaScript', 'TypeScript', 'Python', 'Firebase', 'Supabase', 'MySQL', 'Tailwind', 'Next.js'].map(tech => `
-              <div class="flex flex-col items-center p-4 bg-gray-100 dark:bg-gray-800 rounded-xl hover:bg-primary/10 transition">
-                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/${tech.toLowerCase().replace('.js','').replace(' ','')}/${tech.toLowerCase().replace('.js','').replace(' ','')}-original.svg" alt="${tech}" class="w-12 h-12 mb-2" loading="lazy" />
-                <span class="text-sm font-medium">${tech}</span>
-              </div>
-            `).join('')}
+            <div class="flex flex-col items-center p-5 bg-orange-50 dark:bg-gray-800 rounded-2xl card-hover">
+              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="React" class="w-12 h-12 mb-2" loading="lazy"><span class="font-semibold">React.js</span>
+            </div>
+            <div class="flex flex-col items-center p-5 bg-orange-50 dark:bg-gray-800 rounded-2xl card-hover">
+              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" alt="Node.js" class="w-12 h-12 mb-2" loading="lazy"><span class="font-semibold">Node.js</span>
+            </div>
+            <div class="flex flex-col items-center p-5 bg-orange-50 dark:bg-gray-800 rounded-2xl card-hover">
+              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" alt="JavaScript" class="w-12 h-12 mb-2" loading="lazy"><span class="font-semibold">JavaScript</span>
+            </div>
+            <div class="flex flex-col items-center p-5 bg-orange-50 dark:bg-gray-800 rounded-2xl card-hover">
+              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" alt="HTML5" class="w-12 h-12 mb-2" loading="lazy"><span class="font-semibold">HTML5</span>
+            </div>
+            <div class="flex flex-col items-center p-5 bg-orange-50 dark:bg-gray-800 rounded-2xl card-hover">
+              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" alt="CSS3" class="w-12 h-12 mb-2" loading="lazy"><span class="font-semibold">CSS3</span>
+            </div>
+            <div class="flex flex-col items-center p-5 bg-orange-50 dark:bg-gray-800 rounded-2xl card-hover">
+              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python" class="w-12 h-12 mb-2" loading="lazy"><span class="font-semibold">Python</span>
+            </div>
+            <div class="flex flex-col items-center p-5 bg-orange-50 dark:bg-gray-800 rounded-2xl card-hover">
+              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" alt="MySQL" class="w-12 h-12 mb-2" loading="lazy"><span class="font-semibold">MySQL</span>
+            </div>
+            <div class="flex flex-col items-center p-5 bg-orange-50 dark:bg-gray-800 rounded-2xl card-hover">
+              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/firebase/firebase-plain.svg" alt="Firebase" class="w-12 h-12 mb-2" loading="lazy"><span class="font-semibold">Firebase</span>
+            </div>
+            <div class="flex flex-col items-center p-5 bg-orange-50 dark:bg-gray-800 rounded-2xl card-hover">
+              <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/supabase/supabase-original.svg" alt="Supabase" class="w-12 h-12 mb-2" loading="lazy"><span class="font-semibold">Supabase</span>
+            </div>
           </div>
         </div>
 
         <div>
-          <h3 class="text-3xl font-bold text-primary mb-8">Grow with Denzel</h3>
+          <h3 class="text-3xl font-bold text-primary mb-8">My Mission: “Grow with Denzel”</h3>
           <p class="text-lg text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
-            I run <strong>Grow with Denzel</strong> — a mentorship initiative where I teach young people how to code, ship real apps, and build confidence in tech.
+            Under the banner <strong>“Grow with Denzel”,</strong> I teach young people how to code, create, and launch real-world digital products. The goal is more than building apps, it’s about developing confidence, creativity, and community.
           </p>
-          <ul class="space-y-4 text-lg text-gray-600 dark:text-gray-400">
-            <li class="flex items-start gap-3"><i class="fas fa-check text-primary mt-1"></i> Live workshops & project-based learning</li>
-            <li class="flex items-start gap-3"><i class="fas fa-check text-primary mt-1"></i> 1-on-1 mentorship for aspiring developers</li>
-            <li class="flex items-start gap-3"><i class="fas fa-check text-primary mt-1"></i> Free YouTube tutorials & open-source projects</li>
-          </ul>
+          <p class="text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
+            I share tutorials, live coding sessions, and motivational insights, all grounded in the belief that anyone can evolve from beginner to builder when given the right guidance and opportunities.
+          </p>
         </div>
       </div>
     </div>
   </section>
 
   <!-- Projects -->
-  <section id="projects" class="py-24 bg-gray-50 dark:bg-gray-800">
+  <section id="projects" class="py-24 bg-gray-50 dark:bg-gray-900">
     <div class="max-w-7xl mx-auto px-6">
       <div class="text-center mb-16">
-        <h2 class="text-5xl font-bold text-primary mb-6">Featured Projects</h2>
-        <p class="text-xl text-gray-600 dark:text-gray-400">Real products solving real problems</p>
+        <h2 class="text-5xl font-black text-primary mb-6">Featured Projects</h2>
+        <p class="text-xl text-gray-600 dark:text-gray-400">Here are some of my recent works that reflect my passion for building and teaching.</p>
       </div>
 
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
-        <!-- Ventrai -->
-        <div class="card bg-white dark:bg-gray-900 shadow-xl animate-fade-in-up">
-          <figure class="h-56 bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center text-8xl">👥</figure>
-          <div class="card-body">
-            <h3 class="card-title text-primary">Ventrai</h3>
-            <p>Mentorship platform connecting experienced professionals with ambitious learners.</p>
-            <div class="card-actions justify-start mt-4">
-              <div class="badge badge-outline">React</div>
-              <div class="badge badge-outline">Node.js</div>
-              <div class="badge badge-outline">Firebase</div>
+        <!-- All your original projects exactly as you wrote them -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden card-hover fade-in">
+          <div class="h-56 bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-9xl">People</div>
+          <div class="p-8">
+            <h3 class="text-2xl font-bold text-primary mb-3">Ventrai</h3>
+            <p class="text-gray-600 dark:text-gray-300 mb-5">Connecting mentors with mentees, bridging experience and curiosity.</p>
+            <div class="flex flex-wrap gap-3 mb-6">
+              <span class="badge badge-lg badge-outline">ReactJS</span>
+              <span class="badge badge-lg badge-outline">Node.js</span>
+              <span class="badge badge-lg badge-outline">Firebase</span>
             </div>
-            <div class="mt-6 flex gap-4">
-              <a href="https://ventrai.pages.dev" target="_blank" class="link link-primary">Live Demo →</a>
-              <a href="https://github.com/Ventraiz/Ventrai" target="_blank" class="link link-neutral">GitHub</a>
+            <div class="flex flex-wrap gap-4 text-lg font-medium">
+              <a href="https://ventrai.pages.dev" target="_blank" class="text-primary hover:underline">Live Demo →</a>
+              <a href="https://github.com/Ventraiz/Ventrai" target="_blank" class="text-gray-600 dark:text-gray-400 hover:text-primary">GitHub</a>
+              <a href="./ventrai.html" class="text-gray-600 dark:text-gray-400 hover:text-primary">About this project</a>
             </div>
           </div>
         </div>
 
-        <!-- Add other projects similarly with better cards -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden card-hover fade-in">
+          <div class="h-56 bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center text-9xl">Plant</div>
+          <div class="p-8">
+            <h3 class="text-2xl font-bold text-primary mb-3">Phytelix</h3>
+            <p class="text-gray-600 dark:text-gray-300 mb-5">Helping farmers achieve higher yield incomes through digital tools.</p>
+            <div class="flex flex-wrap gap-3 mb-6">
+              <span class="badge badge-lg badge-outline">HTML</span>
+              <span class="badge badge-lg badge-outline">CSS</span>
+              <span class="badge badge-lg badge-outline">JavaScript</span>
+            </div>
+            <div class="flex flex-wrap gap-4 text-lg font-medium">
+              <a href="https://phytelix.com" target="_blank" class="text-primary hover:underline">Live Demo →</a>
+              <a href="https://github.com/Phytellix" target="_blank" class="text-gray-600 dark:text-gray-400 hover:text-primary">GitHub</a>
+              <a href="./phytelix.html" class="text-gray-600 dark:text-gray-400 hover:text-primary">About this project</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden card-hover fade-in">
+          <div class="h-56 bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center text-9xl">Pinch Hand</div>
+          <div class="p-8">
+            <h3 class="text-2xl font-bold text-primary mb-3">Url Shortener</h3>
+            <p class="text-gray-600 dark:text-gray-300 mb-5">Another fun project that shortens really long url links!</p>
+            <div class="flex flex-wrap gap-3 mb-6">
+              <span class="badge badge-lg badge-outline">HTML</span>
+              <span class="badge badge-lg badge-outline">CSS</span>
+              <span class="badge badge-lg badge-outline">JavaScript</span>
+              <span class="badge badge-lg badge-outline">URLs</span>
+            </div>
+            <div class="flex flex-wrap gap-4 text-lg font-medium">
+              <a href="https://denzeldcb.github.io/portfolio/url_shortner" target="_blank" class="text-primary hover:underline">Live Demo →</a>
+              <a href="https://github.com/DenzelDCB/portfolio/blob/main/url_shortner.html" target="_blank" class="text-gray-600 dark:text-gray-400 hover:text-primary">Code</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden card-hover fade-in">
+          <div class="h-56 bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center text-9xl">Atom Symbol</div>
+          <div class="p-8">
+            <h3 class="text-2xl font-bold text-primary mb-3">Bottle Submarine: Western UP Stem Fair</h3>
+            <p class="text-gray-600 dark:text-gray-300 mb-5">Bottle in the shape of submarine that moves in water!</p>
+            <div class="flex flex-wrap gap-3 mb-6">
+              <span class="badge badge-lg badge-outline">Science</span>
+              <span class="badge badge-lg badge-outline">STEM</span>
+              <span class="badge badge-lg badge-outline">DIY</span>
+            </div>
+            <div class="flex flex-wrap gap-4 text-lg font-medium">
+              <a href="https://www.wupstem.org/wp-content/uploads/2024/03/SCORES_WUP-STEM-Fair_2024-Scoring-Sheet-1.pdf" target="_blank" class="text-primary hover:underline">View score →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Games -->
+  <section id="games" class="py-24 bg-white dark:bg-gray-900">
+    <div class="max-w-7xl mx-auto px-6 text-center">
+      <h2 class="text-5xl font-black text-primary mb-6">Game Zone</h2>
+      <p class="text-xl text-gray-600 dark:text-gray-400 mb-12">Take a quick break and play!</p>
+      <div class="max-w-2xl mx-auto">
+        <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden card-hover fade-in">
+          <div class="h-64 bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center text-9xl">Map</div>
+          <div class="p-10">
+            <h3 class="text-3xl font-bold text-primary mb-4">Maze game</h3>
+            <p class="text-gray-600 dark:text-gray-300 mb-6">A 2 player maze game of reaching the goal with an enemy!</p>
+            <div class="flex flex-wrap justify-center gap-4 mb-8">
+              <span class="badge badge-lg badge-outline">HTML</span>
+              <span class="badge badge-lg badge-outline">CSS</span>
+              <span class="badge badge-lg badge-outline">JavaScript</span>
+              <span class="badge badge-lg badge-outline">A* Pathfinding</span>
+            </div>
+            <div class="flex justify-center gap-8 text-lg font-medium">
+              <a href="./maze1" target="_blank" class="text-primary hover:underline">Play Now →</a>
+              <a href="https://github.com/DenzelDCB/portfolio/blob/main/maze1.html" target="_blank" class="text-gray-600 dark:text-gray-400 hover:text-primary">View Code</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Grow with Denzel -->
+  <section id="grow" class="py-24 bg-gray-50 dark:bg-gray-900">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-16">
+        <h2 class="text-5xl font-black text-primary mb-6">Grow with Denzel</h2>
+        <p class="text-xl text-gray-600 dark:text-gray-400 max-w-4xl mx-auto">
+          Through “Grow with Denzel,” I host live workshops, publish video tutorials, and build community-driven projects with young coders.
+        </p>
+      </div>
+      <div class="grid lg:grid-cols-2 gap-16 items-center">
+        <div class="space-y-8 text-lg text-gray-700 dark:text-gray-300">
+          <p>I believe in:</p>
+          <ul class="space-y-4 text-xl">
+            <li class="flex items-start gap-4"><i class="fas fa-check text-primary mt-1"></i> Learning by doing, building real apps, not just following tutorials.</li>
+            <li class="flex items-start gap-4"><i class="fas fa-check text-primary mt-1"></i> Mentorship and peer collaboration, sharing knowledge and growing together.</li>
+            <li class="flex items-start gap-4"><i class="fas fa-check text-primary mt-1"></i> Giving back, using tech to solve real problems in communities.</li>
+          </ul>
+          <p class="text-xl font-medium">
+            If you’re passionate about code, curious about how things work, or ready to build your own path in tech, join me. Let’s grow together.
+          </p>
+        </div>
+        <div>
+          <img src="https://i.ytimg.com/vi/2h8B3xWycMk/maxresdefault.jpg" alt="Grow with Denzel Workshop" class="rounded-3xl shadow-2xl w-full" loading="lazy" />
+        </div>
       </div>
     </div>
   </section>
 
   <!-- Contact -->
   <section id="contact" class="py-24 bg-white dark:bg-gray-900">
-    <div class="max-w-3xl mx-auto px-6 text-center">
-      <h2 class="text-5xl font-bold text-primary mb-8">Let's Build Together</h2>
-      <p class="text-xl text-gray-600 dark:text-gray-400 mb-12">
-        Have a project in mind? Want to collaborate or learn together?<br>I'm always open to interesting opportunities.
-      </p>
-
-      <form action="https://formspree.io/f/your-id" method="POST" class="space-y-6 max-w-xl mx-auto">
-        <input type="text" name="name" placeholder="Your Name" class="input input-bordered w-full" required />
-        <input type="email" name="email" placeholder="Your Email" class="input input-bordered w-full" required />
-        <textarea name="message" rows="6" placeholder="Your Message" class="textarea textarea-bordered w-full" required></textarea>
-        <button type="submit" class="btn btn-primary btn-lg rounded-full">Send Message</button>
-      </form>
+    <div class="max-w-4xl mx-auto px-6 text-center">
+      <h2 class="text-5xl font-black text-primary mb-8">Let’s Build Something Amazing</h2>
+      <p class="text-xl text-gray-600 dark:text-gray-400 mb-12">Open to collaborations, mentorship, or just saying hi!</p>
+      <div class="flex justify-center gap-10 text-5xl">
+        <a href="https://github.com/DenzelDCB" target="_blank" class="text-gray-700 dark:text-gray-300 hover:text-primary transition"><i class="fab fa-github"></i></a>
+        <a href="https://www.youtube.com/@Denzelbabs" target="_blank" class="text-gray-700 dark:text-gray-300 hover:text-primary transition"><i class="fab fa-youtube"></i></a>
+        <a href="https://www.linkedin.com/company/grow-with-denzel" target="_blank" class="text-gray-700 dark:text-gray-300 hover:text-primary transition"><i class="fab fa-linkedin"></i></a>
+      </div>
     </div>
   </section>
 
   <!-- Footer -->
-  <footer class="py-16 bg-gradient-to-r from-orange-600 to-orange-800 text-white">
+  <footer class="py-16 bg-gradient-to-br from-primary to-orange-700 text-white">
     <div class="max-w-7xl mx-auto px-6 text-center">
-      <h3 class="text-3xl font-bold mb-4">Denzel Babajide</h3>
-      <p class="mb-8 opacity-90">Full Stack Developer • Educator • Community Builder</p>
-      <div class="flex justify-center gap-10 text-2xl mb-10">
-        <a href="https://github.com/DenzelDCB" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
-        <a href="https://youtube.com/@Denzelbabs" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-        <a href="https://linkedin.com/company/grow-with-denzel" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
-      </div>
+      <h3 class="text-4xl font-black mb-3">Denzel Babajide</h3>
+      <p class="text-xl mb-8 opacity-90">Full Stack Developer • Educator • Building the future with advanced solutions.</p>
       <p class="text-sm opacity-75">&copy; 2025 Denzel Babajide. All rights reserved.</p>
     </div>
   </footer>
 
   <script>
     // Mobile menu
-    document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+    document.getElementById('mobile-btn').addEventListener('click', () => {
       document.getElementById('mobile-menu').classList.toggle('hidden');
     });
 
-    // Dark mode
-    const toggle = document.getElementById('dark-mode-toggle');
-    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    // Dark mode with persistence
+    const toggle = document.getElementById('theme-toggle');
+    if (localStorage.theme === 'dark' || (!localStorage.theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
       document.documentElement.classList.add('dark');
       toggle.checked = true;
     }
-    toggle.addEventListener('change', (e) => {
-      if (e.target.checked) {
+    toggle.addEventListener('change', () => {
+      if (toggle.checked) {
         document.documentElement.classList.add('dark');
         localStorage.theme = 'dark';
       } else {
@@ -231,16 +334,11 @@
       }
     });
 
-    // Intersection Observer for animations
+    // Fade-in on scroll
     const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('animate-fade-in-up');
-        }
-      });
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('fade-in', 'animate-fade-in'); });
     }, { threshold: 0.1 });
-
-    document.querySelectorAll('.card, section').forEach(el => observer.observe(el));
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
   </script>
 </body>
 </html>
