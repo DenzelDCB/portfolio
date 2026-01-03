@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -427,23 +428,32 @@
         }
 
         @keyframes bombFlash {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+            }
         }
 
         .bomb-icon {
             font-size: 20px;
             animation: bombFlash 0.5s infinite;
         }
-        </style>
+    </style>
 </head>
+
 <body>
     <div class="container">
         <div class="canvas-section">
             <div class="title">AUTONOMOUS VEHICLE SIMULATOR - Lane-Based Driving with AI Detection</div>
             <canvas id="canvas"></canvas>
-            
+
             <div class="controls">
                 <div class="control-group">
                     <label>Vehicles (Lane-based):</label>
@@ -452,14 +462,16 @@
                     <button id="spawnTruck">Truck</button>
                     <button id="spawnTrafficJam">Traffic Jam</button>
                 </div>
-                
+
                 <div class="control-group">
                     <label>Pedestrians (Any Position):</label>
                     <button id="spawnPerson">Person (Custom)</button>
                     <button id="spawnGroupPeople">Group</button>
                     <div id="personCustomizer" style="display: none; gap: 5px; align-items: center;">
-                        <input type="text" id="personName" placeholder="Name" maxlength="15" style="width: 80px; padding: 5px; border-radius: 3px; border: 1px solid #00ff00; background: #222; color: #00ff00;">
-                        <input type="color" id="personColor" value="#ff99ff" style="width: 40px; height: 30px; cursor: pointer; border: 1px solid #00ff00; border-radius: 3px;">
+                        <input type="text" id="personName" placeholder="Name" maxlength="15"
+                            style="width: 80px; padding: 5px; border-radius: 3px; border: 1px solid #00ff00; background: #222; color: #00ff00;">
+                        <input type="color" id="personColor" value="#ff99ff"
+                            style="width: 40px; height: 30px; cursor: pointer; border: 1px solid #00ff00; border-radius: 3px;">
                     </div>
                 </div>
 
@@ -483,12 +495,13 @@
                     <button id="deleteMode">Delete Object</button>
                     <button id="clearAll">Clear All</button>
                     <button id="toggleSensors" class="active">Sensors ON</button>
-                    <button id="secretBtn" style="background: #666; opacity: 0.3;">?</button>
+                    <!-- <button id="secretBtn" style="background: #666; opacity: 0.3;">?</button> -->
                 </div>
             </div>
-            <div id="spawnHint" class="spawn-hint" style="display:none; text-align: center;">Click on canvas to place object</div>
-            
-            <div id="secretSection" class="secret-section" style="display: none;">
+            <div id="spawnHint" class="spawn-hint" style="display:none; text-align: center;">Click on canvas to place
+                object</div>
+
+            <!-- <div id="secretSection" class="secret-section" style="display: none;">
                 <div class="secret-header">
                     <span>SECRET WEAPONS</span>
                     <button id="closeSecret" class="close-btn">✕</button>
@@ -501,7 +514,7 @@
                         <p class="bomb-info">Click on canvas to place bombs. They explode on impact!</p>
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
 
         <div class="output-section">
@@ -556,7 +569,7 @@
     <script>
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
-        
+
         // Resize canvas
         function resizeCanvas() {
             const rect = canvas.getBoundingClientRect();
@@ -636,12 +649,12 @@
             draw(ctx) {
                 const timeLeft = this.explodeAt - Date.now();
                 const flash = (timeLeft % 300) < 150; // Flash effect
-                
+
                 ctx.fillStyle = flash ? '#ff0000' : '#660000';
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
                 ctx.fill();
-                
+
                 // Fuse
                 ctx.strokeStyle = '#ffaa00';
                 ctx.lineWidth = 2;
@@ -649,7 +662,7 @@
                 ctx.moveTo(this.x, this.y - this.radius);
                 ctx.lineTo(this.x, this.y - this.radius - 10);
                 ctx.stroke();
-                
+
                 // Spark at fuse tip
                 if (flash) {
                     ctx.fillStyle = '#ffff00';
@@ -711,7 +724,7 @@
                         vehicle.isCrashed = true;
                         vehicle.crashFrame = 0;
                         isRunning = false;
-                        
+
                         // Show crash modal
                         document.getElementById('crashOverlay').style.display = 'block';
                         document.getElementById('crashModal').style.display = 'block';
@@ -765,9 +778,9 @@
                 this.crashFrame = 0;
                 this.crashParticles = [];
                 this.name = null; // For named pedestrians
-                
+
                 // Set properties based on type
-                switch(type) {
+                switch (type) {
                     case 'car':
                         this.width = 25;
                         this.height = 40;
@@ -851,11 +864,11 @@
                     this.crashFrame++;
                     const maxCrashFrames = 80;
                     const progress = this.crashFrame / maxCrashFrames;
-                    
+
                     // Shrink
                     this.width = this.originalWidth * (1 - progress);
                     this.height = this.originalHeight * (1 - progress);
-                    
+
                     // Delete after animation
                     if (this.crashFrame > maxCrashFrames) {
                         return false;
@@ -868,11 +881,11 @@
                     this.hitFrame++;
                     const maxHitFrames = 60;
                     const progress = this.hitFrame / maxHitFrames;
-                    
+
                     // Shrink
                     this.width = this.originalWidth * (1 - progress);
                     this.height = this.originalHeight * (1 - progress);
-                    
+
                     // Delete after animation
                     if (this.hitFrame > maxHitFrames) {
                         return false;
@@ -883,12 +896,12 @@
                 // For lane vehicles, move along lane horizontally
                 if (['car', 'bus', 'truck'].includes(this.type) && this.laneIndex !== null) {
                     this.y = lanes[this.laneIndex].y;
-                    
+
                     // Check for traffic signs and obstacles ahead
                     let shouldStop = false;
                     let shouldSlow = false;
                     const detectionDist = 200;
-                    
+
                     // Check for stop signs
                     for (const obj of objects) {
                         if (obj.type === 'stop sign') {
@@ -899,7 +912,7 @@
                             }
                         }
                     }
-                    
+
                     // Check for red/yellow traffic lights
                     for (const obj of objects) {
                         if (obj.type === 'traffic light') {
@@ -914,7 +927,7 @@
                             }
                         }
                     }
-                    
+
                     // Check for yield signs
                     for (const obj of objects) {
                         if (obj.type === 'yield') {
@@ -924,7 +937,7 @@
                             }
                         }
                     }
-                    
+
                     // Check for obstacles (building, tree, pole)
                     for (const obj of objects) {
                         if (['building', 'tree', 'pole'].includes(obj.type)) {
@@ -942,7 +955,7 @@
                             }
                         }
                     }
-                    
+
                     // Check for other vehicles ahead
                     for (const obj of objects) {
                         if (obj.id === this.id) continue;
@@ -958,7 +971,7 @@
                             }
                         }
                     }
-                    
+
                     // Check for main vehicle ahead
                     if (vehicle.currentLane === this.laneIndex) {
                         const dist = this.x - vehicle.x;
@@ -970,7 +983,7 @@
                             }
                         }
                     }
-                    
+
                     // Apply speed control based on obstacles and signs
                     if (shouldStop) {
                         this.speed = 0;
@@ -979,9 +992,9 @@
                     } else {
                         this.speed = Math.min(this.speed + 0.2, this.maxSpeed);
                     }
-                    
+
                     this.x += this.speed; // Move rightward (towards camera/viewer)
-                    
+
                     if (this.x > canvas.width + this.width) {
                         return false; // Mark for removal
                     }
@@ -996,7 +1009,7 @@
                     let avoidX = 0;
                     let avoidY = 0;
                     const avoidRadius = 150;
-                    
+
                     // Avoid vehicle
                     const vDx = this.x - vehicle.x;
                     const vDy = this.y - vehicle.y;
@@ -1005,7 +1018,7 @@
                         avoidX += (vDx / vDist) * (1 - vDist / avoidRadius);
                         avoidY += (vDy / vDist) * (1 - vDist / avoidRadius);
                     }
-                    
+
                     // Avoid other objects
                     for (const obj of objects) {
                         if (obj.id === this.id) continue;
@@ -1037,7 +1050,7 @@
                 } else if (this.type === 'traffic light') {
                     this.lightColor = selectedTrafficLightColor;
                 }
-                
+
                 return true;
             }
 
@@ -1081,12 +1094,12 @@
                     ctx.beginPath();
                     ctx.arc(0, -10, 4, 0, Math.PI * 2);
                     ctx.fill();
-                    
+
                     ctx.fillStyle = this.lightColor === '#ffaa00' ? '#ffaa00' : '#333';
                     ctx.beginPath();
                     ctx.arc(0, 0, 4, 0, Math.PI * 2);
                     ctx.fill();
-                    
+
                     ctx.fillStyle = this.lightColor === '#00ff00' ? '#00ff00' : '#333';
                     ctx.beginPath();
                     ctx.arc(0, 10, 4, 0, Math.PI * 2);
@@ -1107,7 +1120,7 @@
                         const distance = (this.crashFrame / 60) * 80;
                         const particleX = Math.cos(angle) * distance;
                         const particleY = Math.sin(angle) * distance;
-                        
+
                         ctx.fillStyle = `rgba(255, ${Math.floor(150 - this.crashFrame)}, 0, ${1 - (this.crashFrame / 60)})`;
                         ctx.beginPath();
                         const particleSize = 6 - (this.crashFrame / 60) * 4;
@@ -1148,12 +1161,12 @@
                     const dy = obj.y - vehicle.y;
                     const dist = Math.sqrt(dx * dx + dy * dy);
                     const minDist = (obj.width + vehicle.width) / 2;
-                    
+
                     if (dist < minDist) {
                         obj.isHit = true;
                         obj.hitFrame = 0;
                     }
-                    
+
                     // Check collision with other vehicles
                     for (let j = 0; j < objects.length; j++) {
                         if (i === j) continue;
@@ -1163,7 +1176,7 @@
                             const dy = obj.y - vehicleObj.y;
                             const dist = Math.sqrt(dx * dx + dy * dy);
                             const minDist = (obj.width + vehicleObj.width) / 2;
-                            
+
                             if (dist < minDist) {
                                 obj.isHit = true;
                                 obj.hitFrame = 0;
@@ -1185,7 +1198,7 @@
                         const dy = obj1.y - vehicle.y;
                         const dist = Math.sqrt(dx * dx + dy * dy);
                         const minDist = (obj1.width + vehicle.width) / 2;
-                        
+
                         if (dist < minDist) {
                             // Both vehicles crash
                             obj1.isCrashed = true;
@@ -1195,7 +1208,7 @@
                             showCrashModal();
                         }
                     }
-                    
+
                     // Check collision with other vehicles
                     for (let j = 0; j < objects.length; j++) {
                         if (i === j) continue;
@@ -1205,7 +1218,7 @@
                             const dy = obj1.y - obj2.y;
                             const dist = Math.sqrt(dx * dx + dy * dy);
                             const minDist = (obj1.width + obj2.width) / 2;
-                            
+
                             if (dist < minDist) {
                                 // Both vehicles crash
                                 obj1.isCrashed = true;
@@ -1255,7 +1268,7 @@
 
         function detonateBomb(bombX, bombY) {
             const explosionRadius = 200;
-            
+
             // Crash main vehicle if in range
             if (!vehicle.isCrashed) {
                 const dx = vehicle.x - bombX;
@@ -1266,14 +1279,14 @@
                     vehicle.crashFrame = 0;
                 }
             }
-            
+
             // Crash all objects in radius
             for (let i = 0; i < objects.length; i++) {
                 const obj = objects[i];
                 const dx = obj.x - bombX;
                 const dy = obj.y - bombY;
                 const dist = Math.sqrt(dx * dx + dy * dy);
-                
+
                 if (dist < explosionRadius) {
                     if (['car', 'bus', 'truck'].includes(obj.type) && !obj.isCrashed) {
                         obj.isCrashed = true;
@@ -1322,18 +1335,18 @@
 
             const imageArea = canvas.width * canvas.height;
             const sensorLength = 200;
-            
+
             for (const obj of objects) {
                 const dx = obj.x - vehicle.x;
                 const dy = obj.y - vehicle.y;
                 const dist = Math.sqrt(dx * dx + dy * dy);
-                
+
                 if (dist > vehicle.detectionRadius) continue;
 
                 const area = obj.getArea();
                 const occupancy = (area / imageArea) * 100;
                 let distanceLevel = 'SAFE';
-                
+
                 // Use distance-based threat level (in pixels)
                 // This makes sense: closer = more critical
                 if (dist < 60) {
@@ -1550,10 +1563,10 @@
             const sideBlockFrontLeft = vehicle.sensors.frontLeft.detectedObjects.some(d => ['car', 'bus', 'truck', 'person'].includes(d.obj.type) && (d.distanceLevel === 'CRITICAL' || d.distanceLevel === 'WARNING' || d.distanceLevel === 'MODERATE'));
             const sideBlockFrontRight = vehicle.sensors.frontRight.detectedObjects.some(d => ['car', 'bus', 'truck', 'person'].includes(d.obj.type) && (d.distanceLevel === 'CRITICAL' || d.distanceLevel === 'WARNING' || d.distanceLevel === 'MODERATE'));
 
-            return { 
-                actions: actions.sort((a, b) => a.priority - b.priority), 
-                threatLevel, 
-                blockingFront, 
+            return {
+                actions: actions.sort((a, b) => a.priority - b.priority),
+                threatLevel,
+                blockingFront,
                 blockingBack,
                 sideBlockFrontLeft,
                 sideBlockFrontRight,
@@ -1631,7 +1644,7 @@
                     vehicle.lastLaneChangeFrame = frameCount;
                 }
             }
-            
+
             // Always keep vehicle in its current lane
             vehicle.y = lanes[vehicle.currentLane].y;
 
@@ -1685,8 +1698,8 @@
             } else {
                 for (const action of vehicle.actionQueue.slice(0, 5)) {
                     const li = document.createElement('li');
-                    li.className = action.type === 'CRITICAL' ? 'critical' : 
-                                  action.type === 'WARNING' ? 'warning' : 'info';
+                    li.className = action.type === 'CRITICAL' ? 'critical' :
+                        action.type === 'WARNING' ? 'warning' : 'info';
                     li.textContent = action.text;
                     log.appendChild(li);
                 }
@@ -1702,14 +1715,14 @@
                 ...vehicle.sensors.right.detectedObjects,
                 ...vehicle.sensors.back.detectedObjects
             ];
-            
-            const threatCount = allDetected.filter(d => 
+
+            const threatCount = allDetected.filter(d =>
                 d.distanceLevel === 'CRITICAL' || d.distanceLevel === 'CLOSE'
             ).length;
-            
+
             document.getElementById('objectCount').textContent = allDetected.length;
             document.getElementById('threatCount').textContent = threatCount;
-            
+
             if (allDetected.length > 0) {
                 const nearest = allDetected[0];
                 const distStr = nearest.distance.toFixed(0) + 'px';
@@ -1729,7 +1742,7 @@
             // Draw road with lanes
             ctx.fillStyle = '#4a4a4a';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
+
             // Draw lane markings (horizontal)
             ctx.strokeStyle = '#ffff00';
             ctx.lineWidth = 2;
@@ -1749,7 +1762,7 @@
             ctx.moveTo(0, lanes[0].y - lanes[0].width / 2);
             ctx.lineTo(canvas.width, lanes[0].y - lanes[0].width / 2);
             ctx.stroke();
-            
+
             ctx.beginPath();
             ctx.moveTo(0, lanes[lanes.length - 1].y + lanes[lanes.length - 1].width / 2);
             ctx.lineTo(canvas.width, lanes[lanes.length - 1].y + lanes[lanes.length - 1].width / 2);
@@ -1788,7 +1801,7 @@
             // Draw vehicle
             ctx.save();
             ctx.translate(vehicle.x, vehicle.y);
-            
+
             // Handle crash animation for main vehicle
             if (vehicle.isCrashed) {
                 const progress = vehicle.crashFrame / 80;
@@ -1799,7 +1812,7 @@
                 ctx.strokeStyle = '#ffffff';
                 ctx.lineWidth = 2;
                 ctx.strokeRect(-vehicle.width / 2 * shrinkFactor, -vehicle.height / 2 * shrinkFactor, vehicle.width * shrinkFactor, vehicle.height * shrinkFactor);
-                
+
                 // Draw explosion effect
                 if (vehicle.crashFrame < 60) {
                     const numParticles = 8;
@@ -1808,7 +1821,7 @@
                         const distance = (vehicle.crashFrame / 60) * 80;
                         const particleX = Math.cos(angle) * distance;
                         const particleY = Math.sin(angle) * distance;
-                        
+
                         ctx.fillStyle = `rgba(255, ${Math.floor(150 - vehicle.crashFrame)}, 0, ${1 - (vehicle.crashFrame / 60)})`;
                         ctx.beginPath();
                         const particleSize = 6 - (vehicle.crashFrame / 60) * 4;
@@ -1822,13 +1835,13 @@
                 ctx.strokeStyle = '#ffffff';
                 ctx.lineWidth = 2;
                 ctx.strokeRect(-vehicle.width / 2, -vehicle.height / 2, vehicle.width, vehicle.height);
-                
+
                 // Draw headlights
                 ctx.fillStyle = '#ffff99';
                 ctx.fillRect(-vehicle.width / 4, -vehicle.height / 2, vehicle.width / 8, 3);
                 ctx.fillRect(vehicle.width / 4, -vehicle.height / 2, vehicle.width / 8, 3);
             }
-            
+
             ctx.restore();
 
             // Draw sensor lines (if enabled)
@@ -1905,7 +1918,7 @@
 
             if (isRunning) {
                 frameCount++;
-                
+
                 // Auto-spawn vehicles
                 if (frameCount - lastAutoSpawnFrame > autoSpawnInterval) {
                     const randomType = autoSpawnTypes[Math.floor(Math.random() * autoSpawnTypes.length)];
@@ -1913,7 +1926,7 @@
                     objects.push(new DrivingObject(randomType, -50, lanes[randomLane].y, 4, randomLane));
                     lastAutoSpawnFrame = frameCount;
                 }
-                
+
                 detectObjects();
                 checkPersonVehicleCollisions();
                 checkVehicleCollisions();
@@ -1987,7 +2000,7 @@
 
         // Button handlers
         function makeSpawnButton(btnId, type) {
-            document.getElementById(btnId).addEventListener('click', function() {
+            document.getElementById(btnId).addEventListener('click', function () {
                 spawnMode = spawnMode === type ? null : type;
                 this.classList.toggle('spawn-mode');
                 const hint = document.getElementById('spawnHint');
@@ -1996,9 +2009,9 @@
         }
 
         makeSpawnButton('spawnCar', 'car');
-        
+
         // Custom person spawner
-        document.getElementById('spawnPerson').addEventListener('click', function() {
+        document.getElementById('spawnPerson').addEventListener('click', function () {
             const customizer = document.getElementById('personCustomizer');
             const isActive = spawnMode === 'custom_person';
             spawnMode = isActive ? null : 'custom_person';
@@ -2068,20 +2081,20 @@
             }
         });
 
-        document.getElementById('spawnBomb').addEventListener('click', function() {
+        document.getElementById('spawnBomb').addEventListener('click', function () {
             bombMode = !bombMode;
             spawnMode = null;
             this.classList.toggle('active');
             document.querySelectorAll('button').forEach(btn => btn.classList.remove('spawn-mode'));
         });
 
-        document.getElementById('startStop').addEventListener('click', function() {
+        document.getElementById('startStop').addEventListener('click', function () {
             isRunning = !isRunning;
             this.textContent = isRunning ? 'Stop' : 'Start';
             this.style.background = isRunning ? '#ff6600' : '#00ff00';
         });
 
-        document.getElementById('deleteMode').addEventListener('click', function() {
+        document.getElementById('deleteMode').addEventListener('click', function () {
             deleteMode = !deleteMode;
             spawnMode = null;
             this.classList.toggle('delete-mode');
@@ -2100,7 +2113,7 @@
             document.getElementById('actionLog').innerHTML = '<li class="info">✓ Scene cleared</li>';
         });
 
-        document.getElementById('toggleSensors').addEventListener('click', function() {
+        document.getElementById('toggleSensors').addEventListener('click', function () {
             showSensors = !showSensors;
             this.textContent = showSensors ? 'Sensors ON' : 'Sensors OFF';
             this.style.background = showSensors ? '#00ff00' : '#666666';
@@ -2135,4 +2148,5 @@
         animate();
     </script>
 </body>
+
 </html>
