@@ -14,8 +14,8 @@
 
         body {
             font-family: 'Courier New', monospace;
-            background: #1a1a1a;
-            color: #00ff00;
+            background: #0a1a2a;
+            color: #3399ff;
             overflow: hidden;
         }
 
@@ -41,8 +41,8 @@
         }
 
         .controls {
-            background: #222;
-            border: 2px solid #00ff00;
+            background: #142a40;
+            border: 2px solid #3399ff;
             padding: 10px;
             border-radius: 5px;
             display: flex;
@@ -52,8 +52,8 @@
         }
 
         button {
-            background: #00ff00;
-            color: #000;
+            background: #3399ff;
+            color: #fff;
             border: none;
             padding: 10px 20px;
             border-radius: 3px;
@@ -64,27 +64,28 @@
         }
 
         button:hover {
-            background: #00cc00;
+            background: #2673b6;
             transform: scale(1.05);
         }
 
         button.active {
-            background: #ff6600;
+            background: #0055ff;
         }
 
         button.spawn-mode {
-            background: #ffaa00;
+            background: #66ccff;
+            color: #003366;
         }
 
         button.delete-mode {
-            background: #ff4444;
+            background: #336699;
         }
 
         .control-group {
             display: flex;
             gap: 5px;
             align-items: center;
-            border-right: 1px solid #00ff00;
+            border-right: 1px solid #3399ff;
             padding-right: 10px;
         }
 
@@ -94,7 +95,7 @@
 
         label {
             font-size: 12px;
-            color: #00ff00;
+            color: #3399ff;
         }
 
         .output-section {
@@ -106,8 +107,8 @@
         }
 
         .output-panel {
-            background: #111;
-            border: 2px solid #00ff00;
+            background: #142a40;
+            border: 2px solid #3399ff;
             border-radius: 5px;
             padding: 10px;
             flex: 1;
@@ -117,43 +118,43 @@
         }
 
         .output-panel h3 {
-            color: #00ff00;
-            border-bottom: 1px solid #00ff00;
+            color: #3399ff;
+            border-bottom: 1px solid #3399ff;
             margin-bottom: 10px;
             padding-bottom: 5px;
         }
 
         .action-log {
             list-style: none;
-            color: #00ff00;
+            color: #3399ff;
         }
 
         .action-log li {
             margin: 3px 0;
             padding: 3px;
-            border-left: 2px solid #00ff00;
+            border-left: 2px solid #3399ff;
             padding-left: 8px;
             word-break: break-word;
         }
 
         .action-log li.critical {
-            color: #ff0000;
-            border-left-color: #ff0000;
+            color: #0055ff;
+            border-left-color: #0055ff;
         }
 
         .action-log li.warning {
-            color: #ffaa00;
-            border-left-color: #ffaa00;
+            color: #66ccff;
+            border-left-color: #66ccff;
         }
 
         .action-log li.info {
-            color: #00ffff;
-            border-left-color: #00ffff;
+            color: #99ccff;
+            border-left-color: #99ccff;
         }
 
         .stats {
-            background: #222;
-            border: 2px solid #00ff00;
+            background: #142a40;
+            border: 2px solid #3399ff;
             padding: 10px;
             border-radius: 5px;
             font-size: 11px;
@@ -163,7 +164,7 @@
             display: flex;
             justify-content: space-between;
             margin: 3px 0;
-            border-bottom: 1px dashed #00ff00;
+            border-bottom: 1px dashed #3399ff;
         }
 
         .stat-row:last-child {
@@ -173,8 +174,8 @@
         .speed-indicator {
             width: 100%;
             height: 10px;
-            background: #333;
-            border: 1px solid #00ff00;
+            background: #233a5a;
+            border: 1px solid #3399ff;
             border-radius: 3px;
             margin: 5px 0;
             overflow: hidden;
@@ -182,21 +183,21 @@
 
         .speed-fill {
             height: 100%;
-            background: linear-gradient(to right, #00ff00, #ffaa00, #ff0000);
+            background: linear-gradient(to right, #3399ff, #66ccff, #0055ff);
             width: 0%;
             transition: width 0.3s;
         }
 
         .traffic-light-control {
-            background: #222;
-            border: 2px solid #00ff00;
+            background: #142a40;
+            border: 2px solid #3399ff;
             padding: 10px;
             border-radius: 5px;
             margin-top: 10px;
         }
 
         .traffic-light-control h3 {
-            color: #00ff00;
+            color: #3399ff;
             font-size: 12px;
             margin-bottom: 8px;
         }
@@ -211,21 +212,21 @@
             width: 30px;
             height: 30px;
             border-radius: 50%;
-            border: 2px solid #666;
+            border: 2px solid #233a5a;
             cursor: pointer;
             transition: all 0.2s;
         }
 
         .light-btn.red {
-            background: #ff0000;
+            background: #0055ff;
         }
 
         .light-btn.yellow {
-            background: #ffaa00;
+            background: #66ccff;
         }
 
         .light-btn.green {
-            background: #00ff00;
+            background: #3399ff;
         }
 
         .light-btn:hover {
@@ -238,20 +239,20 @@
         }
 
         ::-webkit-scrollbar-track {
-            background: #222;
+            background: #142a40;
         }
 
         ::-webkit-scrollbar-thumb {
-            background: #00ff00;
+            background: #3399ff;
             border-radius: 4px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: #00cc00;
+            background: #2673b6;
         }
 
         .title {
-            color: #00ff00;
+            color: #3399ff;
             text-align: center;
             margin-bottom: 5px;
             font-size: 14px;
@@ -259,8 +260,8 @@
         }
 
         .spawn-hint {
-            background: #ff6600;
-            color: #000;
+            background: #66ccff;
+            color: #003366;
             padding: 5px;
             border-radius: 3px;
             font-weight: bold;
@@ -273,30 +274,30 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: #1a1a1a;
-            border: 3px solid #ff0000;
+            background: #0a1a2a;
+            border: 3px solid #0055ff;
             padding: 40px;
             border-radius: 10px;
             text-align: center;
             z-index: 1000;
-            box-shadow: 0 0 30px rgba(255, 0, 0, 0.5);
+            box-shadow: 0 0 30px rgba(0, 85, 255, 0.5);
         }
 
         .crash-modal h2 {
-            color: #ff0000;
+            color: #0055ff;
             font-size: 32px;
             margin: 0 0 20px 0;
-            text-shadow: 0 0 10px #ff0000;
+            text-shadow: 0 0 10px #0055ff;
         }
 
         .crash-modal p {
-            color: #00ff00;
+            color: #3399ff;
             font-size: 18px;
             margin: 0 0 30px 0;
         }
 
         .crash-modal button {
-            background: #ff0000;
+            background: #0055ff;
             color: #fff;
             border: none;
             padding: 15px 40px;
@@ -308,7 +309,7 @@
         }
 
         .crash-modal button:hover {
-            background: #cc0000;
+            background: #2673b6;
             transform: scale(1.05);
         }
 
@@ -319,7 +320,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(10, 26, 42, 0.7);
             z-index: 999;
         }
 
@@ -327,12 +328,12 @@
             position: fixed;
             bottom: 10px;
             right: 10px;
-            background: #1a1a1a;
-            border: 2px solid #ff00ff;
+            background: #0a1a2a;
+            border: 2px solid #99ccff;
             border-radius: 5px;
             padding: 15px;
             z-index: 500;
-            box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);
+            box-shadow: 0 0 20px rgba(51, 153, 255, 0.3);
             min-width: 250px;
         }
 
@@ -340,16 +341,16 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            color: #ff00ff;
+            color: #99ccff;
             font-weight: bold;
             margin-bottom: 10px;
-            border-bottom: 1px solid #ff00ff;
+            border-bottom: 1px solid #99ccff;
             padding-bottom: 10px;
         }
 
         .close-btn {
-            background: #ff00ff;
-            color: #000;
+            background: #99ccff;
+            color: #003366;
             border: none;
             width: 25px;
             height: 25px;
@@ -360,7 +361,7 @@
         }
 
         .close-btn:hover {
-            background: #ff00ff;
+            background: #3399ff;
             transform: scale(1.1);
         }
 
@@ -371,21 +372,21 @@
         }
 
         .code-input {
-            background: #222;
-            border: 1px solid #ff00ff;
-            color: #ff00ff;
+            background: #142a40;
+            border: 1px solid #99ccff;
+            color: #99ccff;
             padding: 8px;
             border-radius: 3px;
             font-family: 'Courier New', monospace;
         }
 
         .code-input::placeholder {
-            color: #666;
+            color: #233a5a;
         }
 
         .code-btn {
-            background: #ff00ff;
-            color: #000;
+            background: #99ccff;
+            color: #003366;
             border: none;
             padding: 10px;
             border-radius: 3px;
@@ -395,12 +396,12 @@
         }
 
         .code-btn:hover {
-            background: #ff00ff;
+            background: #3399ff;
             transform: scale(1.05);
         }
 
         .bomb-btn {
-            background: #ff0000;
+            background: #0055ff;
             color: #fff;
             border: none;
             padding: 12px;
@@ -412,16 +413,17 @@
         }
 
         .bomb-btn:hover {
-            background: #cc0000;
+            background: #2673b6;
             transform: scale(1.05);
         }
 
         .bomb-btn.active {
-            background: #ff6600;
+            background: #66ccff;
+            color: #003366;
         }
 
         .bomb-info {
-            color: #ffaa00;
+            color: #66ccff;
             font-size: 11px;
             margin: 0;
             text-align: center;
