@@ -3,142 +3,348 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>URL Shortener</title>
+    <title>URL Shortener - Denzel Babs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: { 
+                        primary: '#2563eb',
+                        'primary-dark': '#1e40af',
+                        accent: '#0ea5e9'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
+            font-family: 'Inter', system-ui, sans-serif;
         }
-        .container {
-            background-color: steelblue;
-            padding: 20px;
-            margin: 50px auto;
-            width: 80%;
-            max-width: 1000px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        h1 {
-            background-color: lightblue;
-            border-radius: 12px;
-            text-align: center;
-            margin: 0;
-            padding: 10px;
+        .fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
         }
-        form {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        .pulse-once {
+            animation: pulse 0.5s ease-out;
         }
-        label {
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-        }
-        input[type="url"] {
-            border-radius: 16px;
-            padding: 12px;
-            width: 100%;
-            max-width: 500px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            box-sizing: border-box;
-        }
-        button {
-            background-color: lightskyblue;
-            border-radius: 16px;
-            padding: 12px;
-            border: none;
-            cursor: pointer;
-            font-size: 1rem;
-            margin-top: 10px;
-        }
-        #shortLink {
-            margin-top: 20px;
-        }
-        #shortLink a {
-            color: #333;
-            text-decoration: none;
-            font-size: 1rem;
-        }
-        .copy-button {
-            margin-top: 10px;
-            background-color: green;
-            color: white;
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <h1>URL SHORTENER</h1>
-        <form id="urlForm">
-            <label for="urlLink">Link:</label>
-            <input type="url" id="urlLink" placeholder="Paste URL Link Here" required>
-            <button type="button" onclick="getLink()">Get Link</button>
-            <div id="shortLink"></div>
-        </form>
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-950 dark:to-gray-900 min-h-screen flex items-center justify-center p-6 transition-colors">
+    
+    <!-- Dark Mode Toggle -->
+    <div class="fixed top-6 right-6 z-50">
+        <button id="theme-toggle" class="w-12 h-12 rounded-full bg-white dark:bg-gray-800 shadow-lg flex items-center justify-center hover:shadow-xl transition-all">
+            <i class="fas fa-sun text-yellow-500 text-xl dark:hidden"></i>
+            <i class="fas fa-moon text-blue-400 text-xl hidden dark:block"></i>
+        </button>
     </div>
+
+    <!-- Main Container -->
+    <div class="w-full max-w-2xl fade-in">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary to-accent rounded-2xl shadow-lg mb-4">
+                <i class="fas fa-link text-white text-2xl"></i>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-2">URL Shortener</h1>
+            <p class="text-gray-600 dark:text-gray-400">Transform long URLs into short, shareable links</p>
+        </div>
+
+        <!-- Main Card -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 md:p-10 border border-gray-200 dark:border-gray-700">
+            <!-- Form -->
+            <form id="urlForm" class="space-y-6">
+                <div>
+                    <label for="urlLink" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                        Enter URL
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <i class="fas fa-globe text-gray-400"></i>
+                        </div>
+                        <input 
+                            type="url" 
+                            id="urlLink" 
+                            placeholder="https://example.com/your-long-url" 
+                            required
+                            class="w-full pl-12 pr-4 py-3.5 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-accent focus:border-transparent transition-all"
+                        >
+                    </div>
+                </div>
+
+                <button 
+                    type="button" 
+                    onclick="shortenURL()"
+                    class="w-full bg-gradient-to-r from-primary to-accent text-white font-semibold py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
+                >
+                    <i class="fas fa-compress-alt mr-2"></i>
+                    Shorten URL
+                </button>
+            </form>
+
+            <!-- Result Section -->
+            <div id="resultSection" class="hidden mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
+                <div class="space-y-4">
+                    <!-- Original URL -->
+                    <div class="p-4 bg-gray-50 dark:bg-gray-900 rounded-xl">
+                        <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Original URL</p>
+                        <a id="originalURL" href="#" target="_blank" class="text-sm text-primary dark:text-accent hover:underline break-all"></a>
+                    </div>
+
+                    <!-- Shortened URL -->
+                    <div class="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl border-2 border-primary/20 dark:border-accent/30">
+                        <p class="text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide mb-2">Shortened URL</p>
+                        <div class="flex items-center gap-3">
+                            <a id="shortURL" href="#" target="_blank" class="flex-1 text-lg font-semibold text-primary dark:text-accent hover:underline break-all"></a>
+                            <button 
+                                onclick="copyToClipboard()"
+                                id="copyButton"
+                                class="flex-shrink-0 w-10 h-10 bg-primary dark:bg-accent text-white rounded-lg hover:bg-primary-dark dark:hover:bg-accent/90 transition-all flex items-center justify-center"
+                                title="Copy to clipboard"
+                            >
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex gap-3 pt-2">
+                        <a 
+                            id="visitButton"
+                            href="#" 
+                            target="_blank"
+                            class="flex-1 text-center px-4 py-2.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-all"
+                        >
+                            <i class="fas fa-external-link-alt mr-2"></i>
+                            Visit Link
+                        </a>
+                        <button 
+                            onclick="resetForm()"
+                            class="flex-1 px-4 py-2.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-all"
+                        >
+                            <i class="fas fa-redo mr-2"></i>
+                            Shorten Another
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics (Optional Enhancement) -->
+            <div id="statsSection" class="hidden mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                <div class="grid grid-cols-3 gap-4 text-center">
+                    <div>
+                        <p class="text-2xl font-bold text-primary dark:text-accent" id="totalLinks">0</p>
+                        <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">Total Links</p>
+                    </div>
+                    <div>
+                        <p class="text-2xl font-bold text-primary dark:text-accent" id="savedChars">0</p>
+                        <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">Chars Saved</p>
+                    </div>
+                    <div>
+                        <p class="text-2xl font-bold text-primary dark:text-accent">100%</p>
+                        <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">Success Rate</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center mt-6">
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+                Built by <a href="https://denzelbabs.com" class="text-primary dark:text-accent hover:underline font-semibold">Denzel Babs</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 right-6 bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-6 py-3 rounded-lg shadow-2xl transform translate-y-32 transition-transform duration-300 flex items-center gap-3">
+        <i class="fas fa-check-circle text-green-400 dark:text-green-600"></i>
+        <span id="toastMessage">URL copied to clipboard!</span>
+    </div>
+
     <script>
-        // Check if there are existing URL mappings in local storage
-        if (!localStorage.getItem('urlMappings')) {
-            localStorage.setItem('urlMappings', JSON.stringify({}));
+        // Initialize storage
+        const STORAGE_KEY = 'urlMappings';
+        
+        if (!localStorage.getItem(STORAGE_KEY)) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({}));
         }
 
-        function getLink() {
-            const urlLink = document.getElementById('urlLink').value;
+        // Dark mode toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+
+        if (localStorage.theme === 'dark' || (!localStorage.theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            localStorage.theme = html.classList.contains('dark') ? 'dark' : 'light';
+        });
+
+        // URL Shortening Logic
+        function shortenURL() {
+            const urlInput = document.getElementById('urlLink');
+            const urlLink = urlInput.value.trim();
             
             if (!urlLink) {
-                alert("Please enter a URL.");
+                showToast('Please enter a valid URL', 'error');
                 return;
             }
 
-            // Generate a random short ID for demonstration
-            const randomNum = Math.floor(Math.random() * 100000);
-            const shortId = randomNum.toString();
+            // Validate URL format
+            try {
+                new URL(urlLink);
+            } catch {
+                showToast('Please enter a valid URL format', 'error');
+                return;
+            }
 
-            // Save the mapping to local storage
-            const urlMappings = JSON.parse(localStorage.getItem('urlMappings'));
-            urlMappings[shortId] = urlLink;
-            localStorage.setItem('urlMappings', JSON.stringify(urlMappings));
-
-            // Create a short URL
-            const newLink = `${window.location.href}?id=${shortId}`;
+            // Generate short ID
+            const shortId = generateShortId();
             
-            // Update the DOM to display the new short link
-            document.getElementById('shortLink').innerHTML = `
-                <a href="${urlLink}" target="_blank">Visit the original URL: ${urlLink}</a><br><br>
-                Shortened URL: <a href="${newLink}" target="_blank">${newLink}</a><br>
-                <button class="copy-button" onclick="copyToClipboard('${newLink}')">Copy</button>
-            `;
+            // Save mapping
+            const urlMappings = JSON.parse(localStorage.getItem(STORAGE_KEY));
+            urlMappings[shortId] = urlLink;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(urlMappings));
+
+            // Create shortened URL
+            const baseURL = window.location.origin + window.location.pathname;
+            const shortURL = `${baseURL}?id=${shortId}`;
+
+            // Display results
+            displayResults(urlLink, shortURL);
+            updateStats(urlLink, shortURL);
         }
 
-        // Handle short URL redirection
+        function generateShortId() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let shortId = '';
+            for (let i = 0; i < 6; i++) {
+                shortId += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return shortId;
+        }
+
+        function displayResults(original, shortened) {
+            document.getElementById('originalURL').href = original;
+            document.getElementById('originalURL').textContent = original;
+            document.getElementById('shortURL').href = shortened;
+            document.getElementById('shortURL').textContent = shortened;
+            document.getElementById('visitButton').href = original;
+            
+            document.getElementById('resultSection').classList.remove('hidden');
+            document.getElementById('statsSection').classList.remove('hidden');
+            
+            // Scroll to results
+            document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function updateStats(original, shortened) {
+            const urlMappings = JSON.parse(localStorage.getItem(STORAGE_KEY));
+            document.getElementById('totalLinks').textContent = Object.keys(urlMappings).length;
+            
+            const charsSaved = original.length - shortened.length;
+            document.getElementById('savedChars').textContent = charsSaved > 0 ? charsSaved : 0;
+        }
+
+        function copyToClipboard() {
+            const shortURL = document.getElementById('shortURL').textContent;
+            const copyButton = document.getElementById('copyButton');
+            
+            navigator.clipboard.writeText(shortURL).then(() => {
+                // Visual feedback
+                copyButton.innerHTML = '<i class="fas fa-check"></i>';
+                copyButton.classList.add('pulse-once');
+                
+                showToast('URL copied to clipboard!', 'success');
+                
+                setTimeout(() => {
+                    copyButton.innerHTML = '<i class="fas fa-copy"></i>';
+                    copyButton.classList.remove('pulse-once');
+                }, 2000);
+            }).catch(err => {
+                console.error('Copy failed:', err);
+                showToast('Failed to copy URL', 'error');
+            });
+        }
+
+        function resetForm() {
+            document.getElementById('urlLink').value = '';
+            document.getElementById('resultSection').classList.add('hidden');
+            document.getElementById('urlLink').focus();
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            const icon = toast.querySelector('i');
+            
+            toastMessage.textContent = message;
+            
+            if (type === 'error') {
+                icon.className = 'fas fa-exclamation-circle text-red-400 dark:text-red-600';
+            } else {
+                icon.className = 'fas fa-check-circle text-green-400 dark:text-green-600';
+            }
+            
+            toast.style.transform = 'translateY(0)';
+            
+            setTimeout(() => {
+                toast.style.transform = 'translateY(8rem)';
+            }, 3000);
+        }
+
+        // Handle URL redirection
         function handleRedirection() {
             const params = new URLSearchParams(window.location.search);
             const shortId = params.get('id');
+            
             if (shortId) {
-                const urlMappings = JSON.parse(localStorage.getItem('urlMappings'));
+                const urlMappings = JSON.parse(localStorage.getItem(STORAGE_KEY));
                 if (urlMappings[shortId]) {
                     window.location.href = urlMappings[shortId];
                 } else {
-                    document.body.innerHTML = "URL not found.";
+                    document.body.innerHTML = `
+                        <div class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 p-6">
+                            <div class="text-center">
+                                <i class="fas fa-unlink text-6xl text-gray-400 mb-4"></i>
+                                <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">URL Not Found</h1>
+                                <p class="text-gray-600 dark:text-gray-400 mb-6">This shortened URL doesn't exist or has expired.</p>
+                                <a href="${window.location.origin}${window.location.pathname}" class="inline-block px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-all">
+                                    Create New Short URL
+                                </a>
+                            </div>
+                        </div>
+                    `;
                 }
             }
         }
 
-        // Check for redirection when the page loads
+        // Initialize
         handleRedirection();
 
-        // Function to copy text to clipboard
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                alert('URL copied to clipboard!');
-                window.location.href="https://denzeldcb.github.io/portfolio/url_shortner";
-            }).catch(err => {
-                console.error('Failed to copy: ', err);
-            });
-        }
+        // Enter key support
+        document.getElementById('urlLink').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                shortenURL();
+            }
+        });
     </script>
 </body>
 </html>
