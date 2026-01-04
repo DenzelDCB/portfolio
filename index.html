@@ -6,14 +6,13 @@
   <meta name="description" content="Denzel Babs – Full Stack Developer & Tech Educator | Building impactful apps and teaching the next generation through Grow with Denzel." />
   <meta name="author" content="Denzel Babajide" />
   <title>Denzel Babs – Full Stack Developer & Educator</title>
-
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       darkMode: 'class',
       theme: {
         extend: {
-          colors: { 
+          colors: {
             primary: '#2563eb',
             'primary-dark': '#1e40af',
             accent: '#0ea5e9'
@@ -26,23 +25,22 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
-
   <style>
-    @keyframes fadeIn { 
-      from { opacity: 0; transform: translateY(20px); } 
-      to { opacity: 1; transform: translateY(0); } 
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
     @keyframes slideDown {
       from { opacity: 0; transform: translateY(-10px); }
       to { opacity: 1; transform: translateY(0); }
     }
     .fade-in { opacity: 0; animation: fadeIn 0.6s ease-out forwards; }
-    .card-professional { 
+    .card-professional {
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       border: 1px solid rgba(0,0,0,0.06);
     }
-    .card-professional:hover { 
-      transform: translateY(-8px); 
+    .card-professional:hover {
+      transform: translateY(-8px);
       box-shadow: 0 20px 40px -12px rgba(0,0,0,0.12);
       border-color: rgba(37, 99, 235, 0.2);
     }
@@ -64,31 +62,33 @@
     }
   </style>
 </head>
-
 <body class="bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors">
-
-  <!-- Dark Mode Toggle -->
-  <div class="fixed top-6 right-6 z-50">
-    <button id="theme-toggle" class="w-12 h-12 rounded-full bg-white dark:bg-gray-800 shadow-lg flex items-center justify-center hover:shadow-xl transition-all">
-      <i class="fas fa-sun text-yellow-500 text-xl dark:hidden"></i>
-      <i class="fas fa-moon text-blue-400 text-xl hidden dark:block"></i>
-    </button>
-  </div>
-
   <!-- Navigation -->
   <nav class="fixed top-0 w-full bg-white/80 dark:bg-gray-950/80 backdrop-blur-xl z-40 border-b border-gray-200 dark:border-gray-800">
     <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
       <a href="#" class="text-xl font-bold text-gray-900 dark:text-white tracking-tight">Denzel Babs</a>
-      <div class="hidden lg:flex items-center gap-8 text-sm font-medium">
-        <a href="#home" class="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-accent transition">Home</a>
-        <a href="#about" class="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-accent transition">About</a>
-        <a href="#projects" class="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-accent transition">Projects</a>
-        <a href="#grow" class="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-accent transition">Teaching</a>
-        <a href="#contact" class="px-6 py-2 bg-primary text-white rounded-full hover:bg-primary-dark transition">Contact</a>
+      
+      <div class="flex items-center gap-6">
+        <!-- Desktop menu links -->
+        <div class="hidden lg:flex items-center gap-8 text-sm font-medium">
+          <a href="#home" class="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-accent transition">Home</a>
+          <a href="#about" class="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-accent transition">About</a>
+          <a href="#projects" class="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-accent transition">Projects</a>
+          <a href="#grow" class="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-accent transition">Teaching</a>
+          <a href="#contact" class="px-6 py-2 bg-primary text-white rounded-full hover:bg-primary-dark transition">Contact</a>
+        </div>
+
+        <!-- Theme toggle button (visible on all screen sizes) -->
+        <button id="theme-toggle" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-700 transition-all focus:outline-none focus:ring-2 focus:ring-primary" aria-label="Toggle dark mode">
+          <i class="fas fa-sun text-yellow-500 text-xl dark:hidden"></i>
+          <i class="fas fa-moon text-blue-400 text-xl hidden dark:block"></i>
+        </button>
+
+        <!-- Mobile menu button -->
+        <button id="mobile-btn" class="lg:hidden text-2xl text-gray-700 dark:text-gray-300">
+          <i class="fas fa-bars"></i>
+        </button>
       </div>
-      <button id="mobile-btn" class="lg:hidden text-2xl text-gray-700 dark:text-gray-300">
-        <i class="fas fa-bars"></i>
-      </button>
     </div>
   </nav>
 
@@ -127,7 +127,6 @@
         <h2 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">About Me</h2>
         <div class="w-20 h-1 bg-primary mx-auto rounded-full"></div>
       </div>
-
       <div class="grid lg:grid-cols-2 gap-12 mb-16">
         <div class="bg-white dark:bg-gray-800 p-10 rounded-2xl shadow-sm card-professional fade-in">
           <div class="flex items-center gap-4 mb-6">
@@ -139,7 +138,6 @@
             I believe technology should be accessible and empowering, and I'm committed to building solutions that make a meaningful impact in people's lives.
           </p>
         </div>
-
         <div class="bg-white dark:bg-gray-800 p-10 rounded-2xl shadow-sm card-professional fade-in" style="animation-delay: 0.1s">
           <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Mission & Values</h3>
           <div class="space-y-4 text-gray-600 dark:text-gray-300 leading-relaxed">
@@ -157,7 +155,6 @@
           </div>
         </div>
       </div>
-
       <!-- Skills -->
       <div class="fade-in" style="animation-delay: 0.2s">
         <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-8 text-center">Technical Expertise</h3>
@@ -211,7 +208,6 @@
         <div class="w-20 h-1 bg-primary mx-auto rounded-full mb-4"></div>
         <p class="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">A selection of projects demonstrating expertise in full-stack development and problem-solving</p>
       </div>
-
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         <div class="bg-gray-50 dark:bg-gray-900 rounded-2xl overflow-hidden card-professional fade-in">
           <div class="h-48 bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
@@ -231,7 +227,6 @@
             </div>
           </div>
         </div>
-
         <div class="bg-gray-50 dark:bg-gray-900 rounded-2xl overflow-hidden card-professional fade-in" style="animation-delay: 0.1s">
           <div class="h-48 bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
             <i class="fas fa-leaf text-white text-7xl"></i>
@@ -250,7 +245,6 @@
             </div>
           </div>
         </div>
-
         <div class="bg-gray-50 dark:bg-gray-900 rounded-2xl overflow-hidden card-professional fade-in" style="animation-delay: 0.2s">
           <div class="h-48 bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center">
             <i class="fas fa-link text-white text-7xl"></i>
@@ -268,7 +262,6 @@
             </div>
           </div>
         </div>
-
         <div class="bg-gray-50 dark:bg-gray-900 rounded-2xl overflow-hidden card-professional fade-in" style="animation-delay: 0.3s">
           <div class="h-48 bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center">
             <i class="fas fa-flask text-white text-7xl"></i>
@@ -387,7 +380,7 @@
     <div class="max-w-7xl mx-auto px-6 text-center">
       <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Denzel Babs</h3>
       <p class="text-gray-600 dark:text-gray-400 mb-6">Full Stack Developer • Educator • Building the future</p>
-      <p class="text-sm text-gray-500 dark:text-gray-500">&copy; 2025 Denzel Babs. All rights reserved.</p>
+      <p class="text-sm text-gray-500 dark:text-gray-500">&copy; 2026 Denzel Babs. All rights reserved.</p>
     </div>
   </footer>
 
@@ -396,12 +389,10 @@
     const mobileBtn = document.getElementById('mobile-btn');
     const mobileMenu = document.getElementById('mobile-menu');
     const mobileLinks = document.querySelectorAll('.mobile-link');
-
     mobileBtn.addEventListener('click', () => {
       mobileMenu.classList.toggle('hidden');
       mobileMenu.classList.toggle('flex');
     });
-
     // Close mobile menu when clicking a link
     mobileLinks.forEach(link => {
       link.addEventListener('click', () => {
@@ -413,17 +404,15 @@
     // Dark mode toggle with persistence
     const themeToggle = document.getElementById('theme-toggle');
     const html = document.documentElement;
-
     // Check for saved theme preference or default to system preference
     if (localStorage.theme === 'dark' || (!localStorage.theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
       html.classList.add('dark');
     } else {
       html.classList.remove('dark');
     }
-
     themeToggle.addEventListener('click', () => {
       html.classList.toggle('dark');
-      
+     
       // Save preference to localStorage
       if (html.classList.contains('dark')) {
         localStorage.theme = 'dark';
@@ -437,7 +426,6 @@
       threshold: 0.1,
       rootMargin: '0px 0px -50px 0px'
     };
-
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -446,7 +434,6 @@
         }
       });
     }, observerOptions);
-
     // Observe all fade-in elements
     document.querySelectorAll('.fade-in').forEach(el => {
       observer.observe(el);
