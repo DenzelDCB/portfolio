@@ -34,6 +34,18 @@
       from { opacity: 0; transform: translateY(-10px); }
       to { opacity: 1; transform: translateY(0); }
     }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    @keyframes slideUp {
+      from { transform: translateY(100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
     .fade-in { opacity: 0; animation: fadeIn 0.6s ease-out forwards; }
     .card-professional {
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -59,6 +71,24 @@
     }
     .dark .section-divider {
       background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    }
+    .hidden-computer {
+      cursor: pointer;
+      transition: all 0.3s ease;
+      opacity: 0.3;
+    }
+    .hidden-computer:hover {
+      opacity: 1;
+      animation: float 2s ease-in-out infinite;
+    }
+    .code-editor {
+      font-family: 'Courier New', monospace;
+      tab-size: 2;
+    }
+    .console-output {
+      font-family: 'Courier New', monospace;
+      white-space: pre-wrap;
+      word-wrap: break-word;
     }
   </style>
 </head>
@@ -104,11 +134,27 @@
   <!-- Hero -->
   <section id="home" class="min-h-screen flex items-center justify-center hero-gradient text-white relative overflow-hidden">
     <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDE2djEzaC0xM1YxNmgxM3ptMCAzdjEwaC0xMFYxOWgxMHoiLz48L2c+PC9nPjwvc3ZnPg==')] opacity-30"></div>
+    
+    <!-- Hidden Computer 1 - Top Right -->
+    <div class="hidden-computer absolute top-24 right-8 text-white/20 hover:text-white text-2xl z-20" data-computer="1" title="Find me!">
+      <i class="fas fa-desktop"></i>
+    </div>
+
+    <!-- Hidden Computer 2 - Top Left -->
+    <div class="hidden-computer absolute top-32 left-12 text-white/20 hover:text-white text-xl z-20" data-computer="2" title="Find me!">
+      <i class="fas fa-laptop"></i>
+    </div>
+
+    <!-- Hidden Computer 3 - Bottom Right -->
+    <div class="hidden-computer absolute bottom-24 right-16 text-white/20 hover:text-white text-2xl z-20" data-computer="3" title="Find me!">
+      <i class="fas fa-laptop-code"></i>
+    </div>
+
     <div class="relative z-10 text-center px-6 max-w-5xl mx-auto">
       <div class="mb-8 fade-in">
-        <img src="./growwithdenzel_profile-removebg-preview.png" alt="Denzel Babs" class="w-32 h-32 rounded-full mx-auto mb-6 border-4 border-white/20 shadow-2xl" loading="lazy" />
+        <img src="./growwithdenzel_profile-removebg-preview.png" alt="Denzel Babs" class="w-32 h-32 rounded-full mx-auto mb-6 border-4 border-white/20 shadow-2xl" loading="lazy" id="profile-img" />
       </div>
-      <h1 class="text-5xl md:text-6xl font-bold mb-4 tracking-tight fade-in" style="animation-delay: 0.1s">Denzel Babs</h1>
+      <h1 class="text-5xl md:text-6xl font-bold mb-4 tracking-tight fade-in" style="animation-delay: 0.1s" id="main-title">Denzel Babs</h1>
       <p class="text-xl md:text-2xl font-medium mb-4 text-blue-100 fade-in" style="animation-delay: 0.2s">Full Stack Developer & Tech Educator</p>
       <p class="text-base md:text-lg max-w-2xl mx-auto leading-relaxed text-blue-50 mb-10 fade-in" style="animation-delay: 0.3s">
         Building exceptional digital experiences with modern technologies while empowering the next generation of developers through education and mentorship.
@@ -120,8 +166,57 @@
     </div>
   </section>
 
+  <!-- Code Editor Modal -->
+  <div id="code-editor-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden" style="animation: slideUp 0.3s ease-out">
+      <div class="bg-gradient-to-r from-blue-600 to-blue-500 p-6 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+          <i class="fas fa-code text-white text-2xl"></i>
+          <h3 class="text-xl font-bold text-white">JavaScript Playground</h3>
+          <span class="text-sm text-white/80 ml-4" id="computers-found">0/3 computers found</span>
+        </div>
+        <button id="close-editor" class="w-10 h-10 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition">
+          <i class="fas fa-times text-white"></i>
+        </button>
+      </div>
+      <div class="p-6 space-y-4">
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Code Editor</label>
+          <textarea id="code-input" class="w-full h-48 p-4 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg border border-gray-300 dark:border-gray-700 code-editor focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="// Write your JavaScript code here
+console.log('Hello, World!');
+
+// Try this:
+// const greeting = 'Welcome to my portfolio!';
+// alert(greeting);">// Your JavaScript code here
+console.log('Hello from Denzel\'s portfolio!');</textarea>
+        </div>
+        <div class="flex gap-3">
+          <button id="run-code" class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition flex items-center gap-2">
+            <i class="fas fa-play"></i>
+            Run Code
+          </button>
+          <button id="clear-console" class="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-semibold transition flex items-center gap-2">
+            <i class="fas fa-eraser"></i>
+            Clear Console
+          </button>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Console Output</label>
+          <div id="console-output" class="w-full h-48 p-4 bg-gray-900 text-green-400 rounded-lg overflow-auto console-output border border-gray-700">
+            <div class="text-gray-500">// Console output will appear here...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- About -->
-  <section id="about" class="py-20 bg-gray-50 dark:bg-gray-900">
+  <section id="about" class="py-20 bg-gray-50 dark:bg-gray-900 relative">
+    <!-- Hidden Computer 4 - In About Section -->
+    <div class="hidden-computer absolute top-12 right-20 text-gray-300 dark:text-gray-700 hover:text-primary dark:hover:text-accent text-2xl z-10" data-computer="4" title="Find me!">
+      <i class="fas fa-computer"></i>
+    </div>
+
     <div class="max-w-6xl mx-auto px-6">
       <div class="text-center mb-16 fade-in">
         <h2 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">About Me</h2>
@@ -201,7 +296,12 @@
   </section>
 
   <!-- Projects -->
-  <section id="projects" class="py-20 bg-white dark:bg-gray-950">
+  <section id="projects" class="py-20 bg-white dark:bg-gray-950 relative">
+    <!-- Hidden Computer 5 - In Projects Section -->
+    <div class="hidden-computer absolute bottom-32 left-12 text-gray-300 dark:text-gray-700 hover:text-primary dark:hover:text-accent text-xl z-10" data-computer="5" title="Find me!">
+      <i class="fas fa-laptop-code"></i>
+    </div>
+
     <div class="max-w-7xl mx-auto px-6">
       <div class="text-center mb-16 fade-in">
         <h2 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">Featured Projects</h2>
@@ -279,7 +379,7 @@
           </div>
         </div>
         <div class="bg-gray-50 dark:bg-gray-900 rounded-2xl overflow-hidden card-professional fade-in" style="animation-delay: 0.4s">
-          <div class="h-48 bg-gradient-to-br from-gray-500 to-black-600 flex items-center justify-center">
+          <div class="h-48 bg-gradient-to-br from-gray-500 to-gray-700 flex items-center justify-center">
             <i class="fas fa-car text-white text-7xl"></i>
           </div>
           <div class="p-8">
@@ -298,10 +398,17 @@
         </div>
       </div>
     </div>
+      </div>
+    </div>
   </section>
 
   <!-- Grow with Denzel -->
-  <section id="grow" class="py-20 bg-gray-50 dark:bg-gray-900">
+  <section id="grow" class="py-20 bg-gray-50 dark:bg-gray-900 relative">
+    <!-- Hidden Computer 6 - In Grow Section -->
+    <div class="hidden-computer absolute top-20 left-24 text-gray-300 dark:text-gray-700 hover:text-primary dark:hover:text-accent text-2xl z-10" data-computer="6" title="Find me!">
+      <i class="fas fa-desktop"></i>
+    </div>
+
     <div class="max-w-6xl mx-auto px-6">
       <div class="text-center mb-16 fade-in">
         <h2 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">Grow with Denzel</h2>
@@ -351,7 +458,12 @@
   </section>
 
   <!-- Contact -->
-  <section id="contact" class="py-20 bg-white dark:bg-gray-950">
+  <section id="contact" class="py-20 bg-white dark:bg-gray-950 relative">
+    <!-- Hidden Computer 7 - In Contact Section -->
+    <div class="hidden-computer absolute bottom-20 right-24 text-gray-300 dark:text-gray-700 hover:text-primary dark:hover:text-accent text-xl z-10" data-computer="7" title="Find me!">
+      <i class="fas fa-laptop"></i>
+    </div>
+
     <div class="max-w-4xl mx-auto px-6 text-center fade-in">
       <h2 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">Let's Connect</h2>
       <div class="w-20 h-1 bg-primary mx-auto rounded-full mb-6"></div>
@@ -393,7 +505,6 @@
       mobileMenu.classList.toggle('hidden');
       mobileMenu.classList.toggle('flex');
     });
-    // Close mobile menu when clicking a link
     mobileLinks.forEach(link => {
       link.addEventListener('click', () => {
         mobileMenu.classList.add('hidden');
@@ -404,7 +515,6 @@
     // Dark mode toggle with persistence
     const themeToggle = document.getElementById('theme-toggle');
     const html = document.documentElement;
-    // Check for saved theme preference or default to system preference
     if (localStorage.theme === 'dark' || (!localStorage.theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
       html.classList.add('dark');
     } else {
@@ -412,8 +522,6 @@
     }
     themeToggle.addEventListener('click', () => {
       html.classList.toggle('dark');
-     
-      // Save preference to localStorage
       if (html.classList.contains('dark')) {
         localStorage.theme = 'dark';
       } else {
@@ -434,7 +542,6 @@
         }
       });
     }, observerOptions);
-    // Observe all fade-in elements
     document.querySelectorAll('.fade-in').forEach(el => {
       observer.observe(el);
     });
@@ -449,6 +556,230 @@
             behavior: 'smooth',
             block: 'start'
           });
+        }
+      });
+    });
+
+    // Hidden Computers Game
+    let foundComputers = new Set();
+    const totalComputers = 7;
+    const codeEditorModal = document.getElementById('code-editor-modal');
+    const closeEditor = document.getElementById('close-editor');
+    const runCodeBtn = document.getElementById('run-code');
+    const clearConsoleBtn = document.getElementById('clear-console');
+    const codeInput = document.getElementById('code-input');
+    const consoleOutput = document.getElementById('console-output');
+    const computersFoundDisplay = document.getElementById('computers-found');
+
+    // Handle hidden computer clicks
+    document.querySelectorAll('.hidden-computer').forEach(computer => {
+      computer.addEventListener('click', () => {
+        const computerId = computer.getAttribute('data-computer');
+        
+        if (!foundComputers.has(computerId)) {
+          foundComputers.add(computerId);
+          computer.style.opacity = '1';
+          computer.style.animation = 'pulse 0.5s ease-in-out 2';
+          
+          // Show notification
+          showNotification(`Computer ${computerId}/${totalComputers} found! 🎉`);
+          
+          // Update counter
+          updateComputerCounter();
+          
+          // If all computers found, open editor
+          if (foundComputers.size === totalComputers) {
+            setTimeout(() => {
+              showVictory();
+              openCodeEditor();
+            }, 1000);
+          }
+        }
+      });
+    });
+
+    function updateComputerCounter() {
+      computersFoundDisplay.textContent = `${foundComputers.size}/${totalComputers} computers found`;
+    }
+
+    function showNotification(message) {
+      const notification = document.createElement('div');
+      notification.className = 'fixed top-24 right-8 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-6 py-4 rounded-xl shadow-2xl z-50 max-w-sm';
+      notification.style.animation = 'slideDown 0.3s ease-out';
+      notification.innerHTML = `
+        <div class="flex items-center gap-3">
+          <i class="fas fa-laptop-code text-primary dark:text-accent text-2xl"></i>
+          <div class="font-semibold">${message}</div>
+        </div>
+      `;
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.remove();
+      }, 3000);
+    }
+
+    function showVictory() {
+      const banner = document.createElement('div');
+      banner.className = 'fixed inset-0 bg-gradient-to-r from-purple-600 to-blue-600 z-40 flex items-center justify-center';
+      banner.style.animation = 'fadeIn 0.5s ease-out';
+      banner.innerHTML = `
+        <div class="text-center text-white px-6">
+          <i class="fas fa-trophy text-6xl mb-4 animate-bounce"></i>
+          <h2 class="text-4xl font-bold mb-4">🎉 Congratulations! 🎉</h2>
+          <p class="text-xl mb-6">You found all ${totalComputers} hidden computers!</p>
+          <p class="text-lg opacity-80">Opening the JavaScript Playground...</p>
+        </div>
+      `;
+      
+      document.body.appendChild(banner);
+      
+      // Create confetti
+      for (let i = 0; i < 100; i++) {
+        createConfetti();
+      }
+      
+      setTimeout(() => {
+        banner.remove();
+      }, 3000);
+    }
+
+    function createConfetti() {
+      const confetti = document.createElement('div');
+      confetti.className = 'fixed text-3xl z-50';
+      confetti.textContent = ['🎉', '🎊', '⭐', '✨', '🌟', '💻', '🖥️'][Math.floor(Math.random() * 7)];
+      confetti.style.left = Math.random() * window.innerWidth + 'px';
+      confetti.style.top = '-50px';
+      document.body.appendChild(confetti);
+      
+      const fallDuration = 3000 + Math.random() * 2000;
+      const startTime = Date.now();
+      
+      const fall = () => {
+        const elapsed = Date.now() - startTime;
+        const progress = elapsed / fallDuration;
+        
+        if (progress < 1) {
+          confetti.style.top = (progress * window.innerHeight) + 'px';
+          confetti.style.transform = `rotate(${progress * 720}deg)`;
+          requestAnimationFrame(fall);
+        } else {
+          confetti.remove();
+        }
+      };
+      
+      fall();
+    }
+
+    function openCodeEditor() {
+      codeEditorModal.classList.remove('hidden');
+      codeEditorModal.classList.add('flex');
+    }
+
+    closeEditor.addEventListener('click', () => {
+      codeEditorModal.classList.add('hidden');
+      codeEditorModal.classList.remove('flex');
+    });
+
+    codeEditorModal.addEventListener('click', (e) => {
+      if (e.target === codeEditorModal) {
+        codeEditorModal.classList.add('hidden');
+        codeEditorModal.classList.remove('flex');
+      }
+    });
+
+    // Run code functionality
+    runCodeBtn.addEventListener('click', () => {
+      const code = codeInput.value;
+      consoleOutput.innerHTML = '';
+      
+      const originalLog = console.log;
+      const logs = [];
+      console.log = function(...args) {
+        logs.push(args.map(arg => {
+          if (typeof arg === 'object') {
+            try {
+              return JSON.stringify(arg, null, 2);
+            } catch (e) {
+              return String(arg);
+            }
+          }
+          return String(arg);
+        }).join(' '));
+        originalLog.apply(console, args);
+      };
+
+      try {
+        eval(code);
+        
+        if (logs.length > 0) {
+          consoleOutput.innerHTML = logs.map(log => 
+            `<div class="mb-1"><span class="text-blue-400">&gt;</span> ${escapeHtml(log)}</div>`
+          ).join('');
+        } else {
+          consoleOutput.innerHTML = '<div class="text-gray-500">// No console output</div>';
+        }
+      } catch (error) {
+        consoleOutput.innerHTML = `<div class="text-red-400"><i class="fas fa-exclamation-triangle"></i> Error: ${escapeHtml(error.message)}</div>`;
+      } finally {
+        console.log = originalLog;
+      }
+    });
+
+    clearConsoleBtn.addEventListener('click', () => {
+      consoleOutput.innerHTML = '<div class="text-gray-500">// Console cleared...</div>';
+    });
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Profile image secret click
+    let profileClicks = 0;
+    const profileImg = document.getElementById('profile-img');
+    profileImg.addEventListener('click', () => {
+      profileClicks++;
+      if (profileClicks === 5) {
+        showNotification('🔍 Hint: Look for hidden computers throughout the page!');
+        profileClicks = 0;
+      }
+    });
+
+    // Double-click skills for tips
+    document.querySelectorAll('.card-professional').forEach(card => {
+      card.addEventListener('dblclick', () => {
+        const skillName = card.querySelector('span')?.textContent;
+        if (skillName) {
+          const tips = {
+            'React.js': 'Pro tip: Use React hooks for cleaner, more reusable code!',
+            'Node.js': 'Pro tip: Always handle async operations properly with try-catch!',
+            'JavaScript': 'Pro tip: Master closures and the event loop for better understanding!',
+            'Python': 'Pro tip: Use list comprehensions for cleaner, more Pythonic code!',
+            'HTML5': 'Pro tip: Semantic HTML improves accessibility and SEO!',
+            'CSS3': 'Pro tip: CSS Grid and Flexbox are your best friends for layouts!',
+            'MySQL': 'Pro tip: Index your database columns for faster queries!',
+            'Firebase': 'Pro tip: Use Firebase security rules to protect your data!',
+            'Supabase': 'Pro tip: Supabase combines the power of PostgreSQL with real-time features!'
+          };
+          
+          const tip = tips[skillName] || 'Keep learning and building amazing things!';
+          
+          const tooltip = document.createElement('div');
+          tooltip.className = 'fixed bg-gray-900 text-white px-4 py-2 rounded-lg shadow-lg z-50 text-sm max-w-xs';
+          tooltip.style.animation = 'slideDown 0.3s ease-out';
+          tooltip.textContent = tip;
+          
+          const rect = card.getBoundingClientRect();
+          tooltip.style.left = rect.left + 'px';
+          tooltip.style.top = (rect.bottom + 10) + 'px';
+          
+          document.body.appendChild(tooltip);
+          
+          setTimeout(() => {
+            tooltip.remove();
+          }, 3000);
         }
       });
     });
