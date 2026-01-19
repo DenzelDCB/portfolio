@@ -416,130 +416,7 @@
             z-index: 999;
         }
 
-        .secret-section {
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-            background: white;
-            border: 2px solid #0066cc;
-            border-radius: 8px;
-            padding: 15px;
-            z-index: 500;
-            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.2);
-            min-width: 250px;
-        }
 
-        .secret-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: #0052a3;
-            font-weight: 600;
-            margin-bottom: 10px;
-            border-bottom: 2px solid #0066cc;
-            padding-bottom: 10px;
-        }
-
-        .close-btn {
-            background: #0066cc;
-            color: white;
-            border: none;
-            width: 25px;
-            height: 25px;
-            padding: 0;
-            border-radius: 50%;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .close-btn:hover {
-            background: #0052a3;
-            transform: scale(1.1);
-        }
-
-        .secret-content {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .code-input {
-            background: #f8f9fa;
-            border: 1px solid #0066cc;
-            color: #1a3a52;
-            padding: 8px;
-            border-radius: 4px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        .code-input::placeholder {
-            color: #aaa;
-        }
-
-        .code-btn {
-            background: #0066cc;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-
-        .code-btn:hover {
-            background: #0052a3;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
-        }
-
-        .bomb-btn {
-            background: #dc3545;
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 13px;
-            transition: all 0.3s;
-        }
-
-        .bomb-btn:hover {
-            background: #c82333;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
-        }
-
-        .bomb-btn.active {
-            background: #1e90ff;
-        }
-
-        .bomb-info {
-            color: #1a3a52;
-            font-size: 12px;
-            margin: 0;
-            text-align: center;
-        }
-
-        @keyframes bombFlash {
-            0% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.1);
-            }
-
-            100% {
-                transform: scale(1);
-            }
-        }
-
-        .bomb-icon {
-            font-size: 20px;
-            animation: bombFlash 0.5s infinite;
-        }
 
         .ai-stats-advanced {
             background: linear-gradient(135deg, #ffffff 0%, #f5f9ff 100%);
@@ -697,7 +574,7 @@
 
                 <div class="control-group">
                     <label><i class="fas fa-sign mr-2"></i>Traffic Signs:</label>
-                    <button id="spawnStopSign" class=""><i class="fas fa-hand mr-2"></i>Stop</button>
+                    <button id="spawnStopSign" class=""><i class="fas fa-hand mr-2" style="color: red;"></i>Stop</button>
                     <button id="spawnTrafficLight" class=""><i class="fas fa-traffic-light mr-2"></i>Light</button>
                     <button id="spawnYield" class=""><i class="fas fa-exclamation-triangle mr-2"></i>Yield</button>
                 </div>
@@ -714,31 +591,14 @@
 
                 <div class="control-group">
                     <label><i class="fas fa-cog mr-2"></i>Simulation:</label>
-                    <button id="startStop" style="background: rgb(255, 149, 0);">Stop</button>
+                    <button id="startStop" style="background: #0066cc;">Start</button>
                     <button id="deleteMode"><i class="fas fa-trash mr-2"></i>Delete</button>
                     <button id="clearAll"><i class="fas fa-eraser mr-2"></i>Clear</button>
                     <button id="toggleSensors" class="active"><i class="fas fa-eye mr-2"></i>Sensors</button>
-                    <button id="secretBtn" style="background: #6c757d; opacity: 0.3;"><i
-                            class="fas fa-secret mr-2"></i>?</button>
                 </div>
             </div>
             <div id="spawnHint" class="spawn-hint" style="display: none; text-align: center;">Click on canvas to place
                 person</div>
-
-            <div id="secretSection" class="secret-section" style="display: none;">
-                <div class="secret-header">
-                    <span>SECRET WEAPONS</span>
-                    <button id="closeSecret" class="close-btn">✕</button>
-                </div>
-                <div class="secret-content">
-                    <input type="password" id="codeInput" placeholder="Enter code..." class="code-input">
-                    <button id="submitCode" class="code-btn">UNLOCK</button>
-                    <div id="bombSection" style="display: none;">
-                        <button id="spawnBomb" class="bomb-btn">Place Bomb (Click canvas)</button>
-                        <p class="bomb-info">Click on canvas to place bombs. They explode on impact!</p>
-                    </div>
-                </div>
-            </div>
         </div>
 
         <div class="output-section">
@@ -953,139 +813,8 @@
         let frameCount = 0;
         let showSensors = true;
         let lastAutoSpawnFrame = 0;
-        const autoSpawnInterval = 120; // frames between auto spawns
-        const autoSpawnTypes = ['car', 'bus', 'truck'];
-        let bombMode = false;
-        let bombsPlaced = [];
-        const SECRET_CODE = '1235';
-        let bombs = [];
-        let explosions = [];
-
-        class Bomb {
-            constructor(x, y) {
-                this.x = x;
-                this.y = y;
-                this.radius = 8;
-                this.createdAt = Date.now();
-                this.explodeAt = Date.now() + 3000; // 3 seconds
-            }
-
-            isExpired() {
-                return Date.now() >= this.explodeAt;
-            }
-
-            draw(ctx) {
-                const timeLeft = this.explodeAt - Date.now();
-                const flash = (timeLeft % 300) < 150; // Flash effect
-
-                ctx.fillStyle = flash ? '#ff0000' : '#660000';
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.fill();
-
-                // Fuse
-                ctx.strokeStyle = '#ffaa00';
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.moveTo(this.x, this.y - this.radius);
-                ctx.lineTo(this.x, this.y - this.radius - 10);
-                ctx.stroke();
-
-                // Spark at fuse tip
-                if (flash) {
-                    ctx.fillStyle = '#ffff00';
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y - this.radius - 12, 3, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-            }
-        }
-
-        class Explosion {
-            constructor(x, y) {
-                this.x = x;
-                this.y = y;
-                this.createdAt = Date.now();
-                this.duration = 600; // 0.6 seconds
-                this.maxRadius = 200;
-            }
-
-            getAge() {
-                return Date.now() - this.createdAt;
-            }
-
-            isActive() {
-                return this.getAge() < this.duration;
-            }
-
-            getCurrentRadius() {
-                const progress = this.getAge() / this.duration;
-                return this.maxRadius * progress;
-            }
-
-            draw(ctx) {
-                const age = this.getAge();
-                const progress = age / this.duration;
-
-                // Explosion center only (no radius rings)
-                ctx.fillStyle = `rgba(255, 255, 0, ${0.4 * (1 - progress)})`;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, 40 * (1 - progress), 0, Math.PI * 2);
-                ctx.fill();
-
-                // Explosion glow
-                ctx.fillStyle = `rgba(255, 150, 0, ${0.3 * (1 - progress)})`;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, 60 * (1 - progress), 0, Math.PI * 2);
-                ctx.fill();
-            }
-
-            checkCollisions() {
-                // Check vehicle collision with explosion
-                const dx = vehicle.x - this.x;
-                const dy = vehicle.y - this.y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-
-                if (dist < this.getCurrentRadius()) {
-                    if (!vehicle.isCrashed) {
-                        // Vehicle hit by explosion - crash it
-                        vehicle.isCrashed = true;
-                        vehicle.crashFrame = 0;
-                        isRunning = false;
-
-                        // Show crash modal
-                        document.getElementById('crashOverlay').style.display = 'block';
-                        document.getElementById('crashModal').style.display = 'block';
-                        document.getElementById('crashModal').querySelector('h2').textContent = 'CAR EXPLODED';
-                    } else {
-                        // Already crashed, just apply force
-                        const force = (1 - dist / this.getCurrentRadius()) * 15;
-                        vehicle.x += (dx / dist) * force;
-                        vehicle.speed *= 0.7;
-                    }
-                }
-
-                // Destroy nearby objects
-                for (let i = objects.length - 1; i >= 0; i--) {
-                    const obj = objects[i];
-                    const dx = obj.x - this.x;
-                    const dy = obj.y - this.y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-
-                    if (dist < this.getCurrentRadius()) {
-                        if (obj.type !== 'building') {
-                            objects.splice(i, 1);
-                        }
-                    }
-                }
-            }
-        }
-
-        function detonateBomb(x, y) {
-            explosions.push(new Explosion(x, y));
-            // Remove the bomb
-            bombs = bombs.filter(b => !(b.x === x && b.y === y));
-        }
+         const autoSpawnInterval = 120; // frames between auto spawns
+         const autoSpawnTypes = ['car', 'bus', 'truck'];
 
         class DrivingObject {
             constructor(type, x, y, speed = 0, laneIndex = null) {
@@ -2287,7 +2016,6 @@
                     vehicle.x += vehicle.speed;
                     if (vehicle.x > canvas.width) {
                         vehicle.x = 0;
-                        objects.length = 0;
                     }
                 }
             } else if (vehicle.speed < 0 && !blockingBack && Math.abs(vehicle.speed) > 0.5) {
@@ -2509,25 +2237,7 @@
                 }
             }
 
-            // Update and draw bombs
-            for (let i = bombs.length - 1; i >= 0; i--) {
-                if (bombs[i].isExpired()) {
-                    detonateBomb(bombs[i].x, bombs[i].y);
-                    bombs.splice(i, 1);
-                } else {
-                    bombs[i].draw(ctx);
-                }
-            }
 
-            // Update and draw explosions
-            for (let i = explosions.length - 1; i >= 0; i--) {
-                if (explosions[i].isActive()) {
-                    explosions[i].draw(ctx);
-                    explosions[i].checkCollisions();
-                } else {
-                    explosions.splice(i, 1);
-                }
-            }
 
             // Draw vehicle
             ctx.save();
@@ -2678,13 +2388,25 @@
             if (isRunning) {
                 frameCount++;
 
-                // Auto-spawn vehicles
-                if (frameCount - lastAutoSpawnFrame > autoSpawnInterval) {
-                    const randomType = autoSpawnTypes[Math.floor(Math.random() * autoSpawnTypes.length)];
-                    const randomLane = Math.floor(Math.random() * lanes.length);
-                    objects.push(new DrivingObject(randomType, -50, lanes[randomLane].y, 4, randomLane));
-                    lastAutoSpawnFrame = frameCount;
-                }
+                // Auto-spawn vehicles (only after car reaches halfway through lane)
+                 if (vehicle.x > canvas.width / 2 && frameCount - lastAutoSpawnFrame > autoSpawnInterval) {
+                     const randomType = autoSpawnTypes[Math.floor(Math.random() * autoSpawnTypes.length)];
+                     let randomLane;
+                     
+                     // If car is at start of lane, spawn in different lanes
+                     if (vehicle.x < 200) {
+                         // Spawn in a different lane than the car
+                         do {
+                             randomLane = Math.floor(Math.random() * lanes.length);
+                         } while (randomLane === vehicle.currentLane);
+                     } else {
+                         // Car is past start, can spawn in any lane
+                         randomLane = Math.floor(Math.random() * lanes.length);
+                     }
+                     
+                     objects.push(new DrivingObject(randomType, -50, lanes[randomLane].y, 4, randomLane));
+                     lastAutoSpawnFrame = frameCount;
+                 }
 
                 detectObjects();
                 checkPersonVehicleCollisions();
@@ -2699,18 +2421,37 @@
         }
 
         // Click to spawn or delete
+        // Check if position collides with existing vehicles
+        function canPlaceVehicle(x, y, width, height) {
+            // Check collision with main vehicle
+            const dx = x - vehicle.x;
+            const dy = y - vehicle.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            const minDist = (width + vehicle.width) / 2;
+            if (dist < minDist) {
+                return false;
+            }
+            
+            // Check collision with other vehicles
+            for (let i = 0; i < objects.length; i++) {
+                const obj = objects[i];
+                if (['car', 'bus', 'truck'].includes(obj.type)) {
+                    const dx = x - obj.x;
+                    const dy = y - obj.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    const minDist = (width + obj.width) / 2;
+                    if (dist < minDist) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
         canvas.addEventListener('click', (e) => {
             const rect = canvas.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
-
-            if (bombMode) {
-                // Place bomb that explodes after 3 seconds
-                bombs.push(new Bomb(x, y));
-                bombMode = false;
-                document.getElementById('spawnBomb').classList.remove('active');
-                return;
-            }
 
             if (deleteMode) {
                 // Delete object at click location
@@ -2740,7 +2481,14 @@
                         closestLane = i;
                     }
                 }
-                objects.push(new DrivingObject(spawnMode, x, lanes[closestLane].y, 4, closestLane));
+                // Check if vehicle can be placed without collision
+                const testVehicle = spawnMode === 'car' ? { width: 60, height: 35 } : spawnMode === 'bus' ? { width: 100, height: 45 } : { width: 90, height: 50 };
+                if (canPlaceVehicle(x, lanes[closestLane].y, testVehicle.width, testVehicle.height)) {
+                    objects.push(new DrivingObject(spawnMode, x, lanes[closestLane].y, 4, closestLane));
+                } else {
+                    alert('Cannot place vehicle here - it would overlap with another vehicle!');
+                    return;
+                }
             } else if (['cone', 'barrier', 'pothole'].includes(spawnMode)) {
                 // These obstacles can go in lanes too
                 let closestLane = 0;
@@ -2826,42 +2574,7 @@
             }
         });
 
-        // Secret section handlers
-        document.getElementById('secretBtn').addEventListener('click', () => {
-            const secretSection = document.getElementById('secretSection');
-            secretSection.style.display = secretSection.style.display === 'none' ? 'block' : 'none';
-        });
 
-        document.getElementById('closeSecret').addEventListener('click', () => {
-            document.getElementById('secretSection').style.display = 'none';
-            document.getElementById('codeInput').value = '';
-            document.getElementById('bombSection').style.display = 'none';
-        });
-
-        document.getElementById('submitCode').addEventListener('click', () => {
-            const code = document.getElementById('codeInput').value;
-            if (code === SECRET_CODE) {
-                document.getElementById('bombSection').style.display = 'block';
-                document.getElementById('codeInput').style.display = 'none';
-                document.getElementById('submitCode').style.display = 'none';
-            } else {
-                alert('Wrong code!');
-                document.getElementById('codeInput').value = '';
-            }
-        });
-
-        document.getElementById('codeInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                document.getElementById('submitCode').click();
-            }
-        });
-
-        document.getElementById('spawnBomb').addEventListener('click', function () {
-            bombMode = !bombMode;
-            spawnMode = null;
-            this.classList.toggle('active');
-            document.querySelectorAll('button').forEach(btn => btn.classList.remove('spawn-mode'));
-        });
 
         document.getElementById('startStop').addEventListener('click', function () {
             isRunning = !isRunning;
