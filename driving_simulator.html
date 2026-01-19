@@ -2280,11 +2280,8 @@
                          // Vehicles and pedestrians always show
                          objects[i].draw(ctx);
                      } else if (isSign || ['building', 'tree', 'pole', 'cone', 'barrier', 'pothole'].includes(objects[i].type)) {
-                         // Signs and obstacles only show in their lane
-                         const laneIndex = objects[i].laneIndex;
-                         if (laneIndex === null || laneIndex === vehicle.currentLane) {
-                             objects[i].draw(ctx);
-                         }
+                         // Signs and obstacles always show (can be placed on any lane)
+                         objects[i].draw(ctx);
                      } else {
                          objects[i].draw(ctx);
                      }
@@ -2544,7 +2541,7 @@
                     return;
                 }
             } else if (['cone', 'barrier', 'pothole', 'stop sign', 'traffic light', 'yield'].includes(spawnMode)) {
-                 // These obstacles and signs can go in lanes too
+                 // Find closest lane (same as vehicles)
                  let closestLane = 0;
                  let minDist = Math.abs(y - lanes[0].y);
                  for (let i = 1; i < lanes.length; i++) {
