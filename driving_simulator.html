@@ -1,8 +1,10 @@
 <!DOCTYPE html>
-<html lang="en"><head>
+<html lang="en">
+
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Autonomous Vehicle Simulator - AI Based</title>
+    <title>Advanced Autonomous Vehicle Simulator - Neural AI</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -13,16 +15,44 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #ffffff 0%, #e6f2ff 100%);
+            background: linear-gradient(135deg, #0f1c3f 0%, #1a2e5a 50%, #0f1c3f 100%);
             color: #003d7a;
             overflow: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background: linear-gradient(to right, #0052b3 0%, #1e90ff 50%, #0052b3 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            border-bottom: 3px solid #1e90ff;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            letter-spacing: 1px;
+        }
+
+        .header p {
+            margin: 5px 0 0 0;
+            font-size: 12px;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
         .container {
             display: flex;
-            height: 100vh;
+            height: calc(100vh - 70px);
             gap: 12px;
             padding: 12px;
+            background: transparent;
         }
 
         .canvas-section {
@@ -42,7 +72,7 @@
         }
 
         .controls {
-            background: white;
+            background: linear-gradient(135deg, #ffffff 0%, #f5f9ff 100%);
             border: 2px solid #0052b3;
             padding: 12px;
             border-radius: 8px;
@@ -50,11 +80,12 @@
             gap: 12px;
             flex-wrap: wrap;
             align-items: center;
-            box-shadow: 0 2px 8px rgba(0, 82, 179, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 82, 179, 0.15);
+            transition: all 0.3s ease;
         }
 
         button {
-            background: #0052b3;
+            background: linear-gradient(to bottom, #0052b3 0%, #003d7a 100%);
             color: white;
             border: none;
             padding: 10px 20px;
@@ -62,16 +93,21 @@
             cursor: pointer;
             font-weight: 600;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            transition: all 0.3s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             align-items: center;
             gap: 6px;
+            box-shadow: 0 2px 8px rgba(0, 82, 179, 0.2);
         }
 
         button:hover {
-            background: #003d7a;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 82, 179, 0.3);
+            background: linear-gradient(to bottom, #1e90ff 0%, #0052b3 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0, 82, 179, 0.4);
+        }
+
+        button:active {
+            transform: translateY(-1px);
         }
 
         button.active {
@@ -114,23 +150,35 @@
         }
 
         .output-section {
-            width: 380px;
+            width: 360px;
+            min-width: 360px;
+            max-width: 360px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            min-width: 380px;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 82, 179, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            overflow-y: auto;
+            max-height: calc(100vh - 90px);
         }
 
         .output-panel {
-            background: white;
+            background: linear-gradient(135deg, #ffffff 0%, #f5f9ff 100%);
             border: 2px solid #0052b3;
             border-radius: 8px;
-            padding: 12px;
-            flex: 1;
+            padding: 10px;
+            min-height: 180px;
+            max-height: 280px;
             overflow-y: auto;
-            font-size: 12px;
-            line-height: 1.6;
-            box-shadow: 0 2px 8px rgba(0, 82, 179, 0.1);
+            font-size: 11px;
+            line-height: 1.5;
+            box-shadow: 0 4px 15px rgba(0, 82, 179, 0.15);
+            transition: all 0.3s ease;
+            flex-shrink: 0;
         }
 
         .output-panel h3 {
@@ -147,13 +195,14 @@
         }
 
         .action-log li {
-            margin: 5px 0;
-            padding: 6px 8px;
-            border-left: 3px solid #0052b3;
-            padding-left: 10px;
+            margin: 3px 0;
+            padding: 4px 6px;
+            border-left: 2px solid #0052b3;
+            padding-left: 8px;
             word-break: break-word;
             background: #f0f5fa;
-            border-radius: 4px;
+            border-radius: 3px;
+            font-size: 10px;
         }
 
         .action-log li.critical {
@@ -175,19 +224,26 @@
         }
 
         .stats {
-            background: white;
+            background: linear-gradient(135deg, #ffffff 0%, #f5f9ff 100%);
             border: 2px solid #0052b3;
-            padding: 12px;
+            padding: 10px;
             border-radius: 8px;
-            font-size: 12px;
-            box-shadow: 0 2px 8px rgba(0, 82, 179, 0.1);
+            font-size: 11px;
+            box-shadow: 0 4px 15px rgba(0, 82, 179, 0.15);
+            transition: transform 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .stats:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 82, 179, 0.2);
         }
 
         .stat-row {
             display: flex;
             justify-content: space-between;
-            margin: 6px 0;
-            padding: 4px 0;
+            margin: 4px 0;
+            padding: 3px 0;
             border-bottom: 1px solid #c2dff5;
             color: #003d7a;
         }
@@ -215,18 +271,24 @@
         }
 
         .traffic-light-control {
-            background: white;
+            background: linear-gradient(135deg, #ffffff 0%, #f5f9ff 100%);
             border: 2px solid #0052b3;
-            padding: 12px;
+            padding: 9px;
             border-radius: 8px;
-            margin-top: 12px;
-            box-shadow: 0 2px 8px rgba(0, 82, 179, 0.1);
+            margin-top: 8px;
+            box-shadow: 0 4px 15px rgba(0, 82, 179, 0.15);
+            transition: transform 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .traffic-light-control:hover {
+            transform: translateY(-2px);
         }
 
         .traffic-light-control h3 {
             color: #003d7a;
-            font-size: 13px;
-            margin-bottom: 10px;
+            font-size: 12px;
+            margin-bottom: 8px;
             font-weight: 600;
         }
 
@@ -478,14 +540,139 @@
             font-size: 20px;
             animation: bombFlash 0.5s infinite;
         }
+
+        .ai-stats-advanced {
+            background: linear-gradient(135deg, #ffffff 0%, #f5f9ff 100%);
+            border: 2px solid #0052b3;
+            padding: 9px;
+            border-radius: 8px;
+            font-size: 10px;
+            box-shadow: 0 4px 15px rgba(0, 82, 179, 0.15);
+            margin-top: 8px;
+            transition: transform 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .ai-stats-advanced:hover {
+            transform: translateY(-2px);
+        }
+
+        .ai-stats-advanced h4 {
+            color: #003d7a;
+            font-size: 12px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #0052b3;
+            padding-bottom: 5px;
+        }
+
+        .ai-metric {
+            display: flex;
+            justify-content: space-between;
+            margin: 4px 0;
+            color: #1a3a52;
+        }
+
+        .ai-metric .label {
+            font-weight: 600;
+        }
+
+        .ai-metric .value {
+            color: #0052b3;
+            font-weight: 700;
+        }
+
+        .threat-bar {
+            width: 100%;
+            height: 6px;
+            background: #c2dff5;
+            border-radius: 3px;
+            margin: 4px 0;
+            overflow: hidden;
+            border: 1px solid #0052b3;
+        }
+
+        .threat-fill {
+            height: 100%;
+            background: linear-gradient(to right, #28a745, #ffc107, #dc3545);
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+
+        .prediction-panel {
+            background: linear-gradient(135deg, #ffffff 0%, #f5f9ff 100%);
+            border: 2px solid #0052b3;
+            border-radius: 8px;
+            padding: 9px;
+            margin-top: 8px;
+            font-size: 10px;
+            box-shadow: 0 4px 15px rgba(0, 82, 179, 0.15);
+            transition: transform 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .prediction-panel:hover {
+            transform: translateY(-2px);
+        }
+
+        .prediction-panel h4 {
+            color: #003d7a;
+            font-size: 12px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #0052b3;
+            padding-bottom: 5px;
+        }
+
+        .prediction-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            color: #1a3a52;
+            border-bottom: 1px solid #e6f2ff;
+        }
+
+        .prediction-item:last-child {
+            border-bottom: none;
+        }
+
+        .confidence {
+            color: #0052b3;
+            font-weight: 600;
+        }
+
+        .mode-indicator {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            color: white;
+            background: #0052b3;
+        }
+
+        .mode-indicator.aggressive {
+            background: #dc3545;
+        }
+
+        .mode-indicator.cautious {
+            background: #ffc107;
+            color: #1a3a52;
+        }
+
+        .mode-indicator.normal {
+            background: #28a745;
+        }
     </style>
 </head>
 
 <body>
+    <div class="header">
+        <h1>🚗 AUTONOMOUS VEHICLE SIMULATOR</h1>
+        <p>Advanced AI-Powered Navigation System with Real-Time Threat Detection</p>
+    </div>
+
     <div class="container">
         <div class="canvas-section">
-            <div class="title">AUTONOMOUS VEHICLE SIMULATOR - Lane-Based Driving with AI Detection</div>
-            <canvas id="canvas" width="1124" height="589"></canvas>
+            <canvas id="canvas" width="50" height="0"></canvas>
 
             <div class="controls">
                 <div class="control-group">
@@ -501,8 +688,10 @@
                     <button id="spawnPerson" class=""><i class="fas fa-person mr-2"></i>Person</button>
                     <button id="spawnGroupPeople"><i class="fas fa-people-group mr-2"></i>Group</button>
                     <div id="personCustomizer" style="display: none; gap: 5px; align-items: center;">
-                        <input type="text" id="personName" placeholder="Name" maxlength="15" style="width: 80px; padding: 5px; border-radius: 4px; border: 1px solid #0066cc; background: white; color: #1a3a52;">
-                        <input type="color" id="personColor" value="#ff99ff" style="width: 40px; height: 30px; cursor: pointer; border: 1px solid #0066cc; border-radius: 4px;">
+                        <input type="text" id="personName" placeholder="Name" maxlength="15"
+                            style="width: 80px; padding: 5px; border-radius: 4px; border: 1px solid #0066cc; background: white; color: #1a3a52;">
+                        <input type="color" id="personColor" value="#ff99ff"
+                            style="width: 40px; height: 30px; cursor: pointer; border: 1px solid #0066cc; border-radius: 4px;">
                     </div>
                 </div>
 
@@ -514,14 +703,14 @@
                 </div>
 
                 <div class="control-group">
-                     <label><i class="fas fa-tree mr-2"></i>Obstacles:</label>
-                     <button id="spawnBuilding"><i class="fas fa-building mr-2"></i>Building</button>
-                     <button id="spawnTree"><i class="fas fa-tree mr-2"></i>Tree</button>
-                     <button id="spawnPole"><i class="fas fa-road mr-2"></i>Pole</button>
-                     <button id="spawnCone"><i class="fas fa-traffic-light mr-2"></i>Cone</button>
-                     <button id="spawnBarrier"><i class="fas fa-shield mr-2"></i>Barrier</button>
-                     <button id="spawnPothole"><i class="fas fa-circle mr-2"></i>Pothole</button>
-                 </div>
+                    <label><i class="fas fa-tree mr-2"></i>Obstacles:</label>
+                    <button id="spawnBuilding"><i class="fas fa-building mr-2"></i>Building</button>
+                    <button id="spawnTree"><i class="fas fa-tree mr-2"></i>Tree</button>
+                    <button id="spawnPole"><i class="fas fa-road mr-2"></i>Pole</button>
+                    <button id="spawnCone"><i class="fas fa-traffic-light mr-2"></i>Cone</button>
+                    <button id="spawnBarrier"><i class="fas fa-shield mr-2"></i>Barrier</button>
+                    <button id="spawnPothole"><i class="fas fa-circle mr-2"></i>Pothole</button>
+                </div>
 
                 <div class="control-group">
                     <label><i class="fas fa-cog mr-2"></i>Simulation:</label>
@@ -529,10 +718,12 @@
                     <button id="deleteMode"><i class="fas fa-trash mr-2"></i>Delete</button>
                     <button id="clearAll"><i class="fas fa-eraser mr-2"></i>Clear</button>
                     <button id="toggleSensors" class="active"><i class="fas fa-eye mr-2"></i>Sensors</button>
-                    <button id="secretBtn" style="background: #6c757d; opacity: 0.3;"><i class="fas fa-secret mr-2"></i>?</button>
+                    <button id="secretBtn" style="background: #6c757d; opacity: 0.3;"><i
+                            class="fas fa-secret mr-2"></i>?</button>
                 </div>
             </div>
-            <div id="spawnHint" class="spawn-hint" style="display: none; text-align: center;">Click on canvas to place person</div>
+            <div id="spawnHint" class="spawn-hint" style="display: none; text-align: center;">Click on canvas to place
+                person</div>
 
             <div id="secretSection" class="secret-section" style="display: none;">
                 <div class="secret-header">
@@ -553,7 +744,16 @@
         <div class="output-section">
             <div class="output-panel">
                 <h3>Real-Time AI Actions</h3>
-                <ul class="action-log" id="actionLog"><li class="warning">🔴 FRONT: 2 object(s)</li><li class="warning">⭕ BACK: 3 object(s)</li><li class="warning">🟡 FRONT-LEFT: 1 object(s)</li><li class="critical">🔴 RED LIGHT - STOP AT LINE</li><li class="info">🛑 STOP SIGN DETECTED AHEAD - APPROACH CAUTIOUSLY</li><li class="info">ℹ TRUCK IN REAR - MONITOR</li><li class="info">ℹ BUS IN REAR - MONITOR</li><li class="info">ℹ CAR IN REAR - MONITOR</li></ul>
+                <ul class="action-log" id="actionLog">
+                    <li class="warning">🔴 FRONT: 2 object(s)</li>
+                    <li class="warning">⭕ BACK: 3 object(s)</li>
+                    <li class="warning">🟡 FRONT-LEFT: 1 object(s)</li>
+                    <li class="critical">🔴 RED LIGHT - STOP AT LINE</li>
+                    <li class="info">🛑 STOP SIGN DETECTED AHEAD - APPROACH CAUTIOUSLY</li>
+                    <li class="info">ℹ TRUCK IN REAR - MONITOR</li>
+                    <li class="info">ℹ BUS IN REAR - MONITOR</li>
+                    <li class="info">ℹ CAR IN REAR - MONITOR</li>
+                </ul>
             </div>
 
             <div class="stats">
@@ -585,9 +785,59 @@
             <div class="traffic-light-control">
                 <h3>Manual Traffic Light Control</h3>
                 <div class="light-buttons">
-                    <div class="light-btn red" id="lightRed" title="Red" style="border: 3px solid rgb(255, 255, 255);"></div>
-                    <div class="light-btn yellow" id="lightYellow" title="Yellow" style="border: 2px solid rgb(102, 102, 102);"></div>
-                    <div class="light-btn green" id="lightGreen" title="Green" style="border: 2px solid rgb(102, 102, 102);"></div>
+                    <div class="light-btn red" id="lightRed" title="Red" style="border: 3px solid rgb(255, 255, 255);">
+                    </div>
+                    <div class="light-btn yellow" id="lightYellow" title="Yellow"
+                        style="border: 2px solid rgb(102, 102, 102);"></div>
+                    <div class="light-btn green" id="lightGreen" title="Green"
+                        style="border: 2px solid rgb(102, 102, 102);"></div>
+                </div>
+            </div>
+
+            <div class="ai-stats-advanced">
+                <h4>Advanced AI Metrics</h4>
+                <div class="ai-metric">
+                    <span class="label">Decision Mode:</span>
+                    <span id="aiMode" class="mode-indicator normal">NORMAL</span>
+                </div>
+                <div class="ai-metric">
+                    <span class="label">Threat Level:</span>
+                    <span id="threatLevel" class="value">LOW</span>
+                </div>
+                <div class="threat-bar">
+                    <div class="threat-fill" id="threatFillBar" style="width: 0%;"></div>
+                </div>
+                <div class="ai-metric">
+                    <span class="label">Reaction Time:</span>
+                    <span id="reactionTime" class="value">0ms</span>
+                </div>
+                <div class="ai-metric">
+                    <span class="label">Accuracy:</span>
+                    <span id="detectionAccuracy" class="value">98%</span>
+                </div>
+                <div class="ai-metric">
+                    <span class="label">Sensor Range:</span>
+                    <span id="sensorRange" class="value">200px</span>
+                </div>
+            </div>
+
+            <div class="prediction-panel">
+                <h4>Predictive Behavior</h4>
+                <div class="prediction-item">
+                    <span>Collision Risk (5s):</span>
+                    <span class="confidence" id="collisionRisk">0%</span>
+                </div>
+                <div class="prediction-item">
+                    <span>Path Obstruction:</span>
+                    <span class="confidence" id="pathObstruction">Clear</span>
+                </div>
+                <div class="prediction-item">
+                    <span>Avg. Safe Distance:</span>
+                    <span class="confidence" id="safeDistance">--</span>
+                </div>
+                <div class="prediction-item">
+                    <span>Decision Confidence:</span>
+                    <span class="confidence" id="decisionConfidence">95%</span>
                 </div>
             </div>
         </div>
@@ -602,6 +852,48 @@
     <script>
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
+
+        // ===== VEHICLE IMAGE CONFIGURATION (Edit these URLs) =====
+        const VEHICLE_IMAGES = {
+            mainVehicle: './car3.png',
+            car: 'car2.png',
+            bus: './bus.png',
+            truck: './truck.png'
+        };
+        // =========================================================
+
+        // Image cache for vehicles
+        const imageCache = {
+            car: null,
+            bus: null,
+            truck: null
+        };
+
+        // Function to load image from URL
+        function loadVehicleImage(type, url) {
+            if (!url) return;
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = function () {
+                imageCache[type] = img;
+                console.log(`✓ Loaded ${type} image`);
+            };
+            img.onerror = function () {
+                console.warn(`✗ Failed to load ${type} image from ${url}`);
+            };
+            img.src = url;
+        }
+
+        // Load vehicle images on startup
+        function initializeVehicleImages() {
+            if (VEHICLE_IMAGES.mainVehicle) loadVehicleImage('mainVehicle', VEHICLE_IMAGES.mainVehicle);
+            if (VEHICLE_IMAGES.car) loadVehicleImage('car', VEHICLE_IMAGES.car);
+            if (VEHICLE_IMAGES.bus) loadVehicleImage('bus', VEHICLE_IMAGES.bus);
+            if (VEHICLE_IMAGES.truck) loadVehicleImage('truck', VEHICLE_IMAGES.truck);
+        }
+
+        // Initialize on startup
+        initializeVehicleImages();
 
         // Resize canvas
         function resizeCanvas() {
@@ -623,19 +915,19 @@
         const vehicle = {
             x: 100,
             y: canvas.height / 2,
-            width: 50,
-            height: 30,
+            width: 80,
+            height: 50,
             speed: 0,
             maxSpeed: 8,
             direction: 0,
-            detectionRadius: 300,
+            detectionRadius: 500,
             isStopped: false,
             actionQueue: [],
             emergencyBraking: false,
             currentLane: 1, // 0, 1, or 2
             laneChangeTime: 0,
             lastLaneChangeFrame: 0,
-            laneChangeCooldown: 25, // frames before can change lane again
+            laneChangeCooldown: 15, // frames before can change lane again
             isCrashed: false,
             crashFrame: 0,
             targetLane: 1, // desired lane for AI navigation
@@ -818,10 +1110,10 @@
                 // Set properties based on type
                 switch (type) {
                     case 'car':
-                        this.width = 25;
-                        this.height = 40;
-                        this.originalWidth = 25;
-                        this.originalHeight = 40;
+                        this.width = 80;
+                        this.height = 50;
+                        this.originalWidth = 80;
+                        this.originalHeight = 50;
                         this.color = '#ff0000';
                         this.maxSpeed = 6;
                         break;
@@ -836,18 +1128,18 @@
                         this.clothColor = '#3366cc';
                         break;
                     case 'bus':
-                        this.width = 30;
-                        this.height = 50;
-                        this.originalWidth = 30;
-                        this.originalHeight = 50;
+                        this.width = 110;
+                        this.height = 55;
+                        this.originalWidth = 110;
+                        this.originalHeight = 55;
                         this.color = '#ffff00';
                         this.maxSpeed = 5;
                         break;
                     case 'truck':
-                        this.width = 35;
-                        this.height = 55;
-                        this.originalWidth = 35;
-                        this.originalHeight = 55;
+                        this.width = 130;
+                        this.height = 60;
+                        this.originalWidth = 130;
+                        this.originalHeight = 60;
                         this.color = '#ff6600';
                         this.maxSpeed = 4;
                         break;
@@ -884,32 +1176,32 @@
                         this.shape = 'triangle';
                         break;
                     case 'traffic light':
-                         this.width = 15;
-                         this.height = 40;
-                         this.color = '#0066cc';
-                         this.lightColor = '#28a745';
-                         this.maxSpeed = 0;
-                         break;
-                     case 'pothole':
-                         this.width = 15;
-                         this.height = 15;
-                         this.color = '#333';
-                         this.maxSpeed = 0;
-                         break;
-                     case 'cone':
-                         this.width = 10;
-                         this.height = 25;
-                         this.color = '#ff8800';
-                         this.maxSpeed = 0;
-                         this.shape = 'cone';
-                         break;
-                     case 'barrier':
-                         this.width = 50;
-                         this.height = 15;
-                         this.color = '#ffff00';
-                         this.maxSpeed = 0;
-                         break;
-                    }
+                        this.width = 15;
+                        this.height = 40;
+                        this.color = '#0066cc';
+                        this.lightColor = '#28a745';
+                        this.maxSpeed = 0;
+                        break;
+                    case 'pothole':
+                        this.width = 15;
+                        this.height = 15;
+                        this.color = '#333';
+                        this.maxSpeed = 0;
+                        break;
+                    case 'cone':
+                        this.width = 10;
+                        this.height = 25;
+                        this.color = '#ff8800';
+                        this.maxSpeed = 0;
+                        this.shape = 'cone';
+                        break;
+                    case 'barrier':
+                        this.width = 50;
+                        this.height = 15;
+                        this.color = '#ffff00';
+                        this.maxSpeed = 0;
+                        break;
+                }
             }
 
             update() {
@@ -1261,119 +1553,43 @@
                     ctx.lineWidth = 1;
                     ctx.strokeRect(-2, -25, 4, 50);
                 } else if (this.type === 'car') {
-                    // Realistic car - FACING RIGHT (direction of movement)
-                    ctx.fillStyle = drawColor;
-                    ctx.fillRect(-this.width / 2, -this.height / 2, this.width, this.height);
-                    
-                    // Front (right side) - headlights and bumper
-                    ctx.fillStyle = '#ffff99';
-                    ctx.fillRect(this.width / 2 - 3, -this.height / 4, 3, 5);  // Front light top
-                    ctx.fillRect(this.width / 2 - 3, this.height / 4 - 5, 3, 5);  // Front light bottom
-                    
-                    // Windows (front windshield larger)
-                    ctx.fillStyle = '#87ceeb';
-                    ctx.fillRect(this.width / 2 - 10, -this.height / 2 + 3, 8, 5);  // Front window
-                    ctx.fillRect(-this.width / 2 + 2, -this.height / 2 + 3, 8, 5);   // Rear window
-                    
-                    // Wheels (bottom)
-                    ctx.fillStyle = '#000';
-                    ctx.beginPath();
-                    ctx.arc(-this.width / 4, this.height / 2, 3, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.beginPath();
-                    ctx.arc(this.width / 4, this.height / 2, 3, 0, Math.PI * 2);
-                    ctx.fill();
-                    
-                    // Wheel rims
-                    ctx.strokeStyle = '#888';
-                    ctx.lineWidth = 1;
-                    ctx.beginPath();
-                    ctx.arc(-this.width / 4, this.height / 2, 3, 0, Math.PI * 2);
-                    ctx.stroke();
-                    ctx.beginPath();
-                    ctx.arc(this.width / 4, this.height / 2, 3, 0, Math.PI * 2);
-                    ctx.stroke();
-                    
-                    ctx.strokeStyle = '#ffffff';
-                    ctx.lineWidth = 2;
-                    ctx.strokeRect(-this.width / 2, -this.height / 2, this.width, this.height);
-                } else if (this.type === 'bus') {
-                    // Realistic bus - FACING RIGHT
-                    ctx.fillStyle = drawColor;
-                    ctx.fillRect(-this.width / 2, -this.height / 2, this.width, this.height);
-                    
-                    // Front (right side) - large windshield
-                    ctx.fillStyle = '#87ceeb';
-                    ctx.fillRect(this.width / 2 - 8, -this.height / 2 + 3, 7, this.height - 6);  // Front windshield
-                    
-                    // Side windows (door windows)
-                    for (let i = 0; i < 3; i++) {
-                        ctx.fillRect(-this.width / 2 + 2, -this.height / 2 + 8 + i * 13, this.width / 2 - 4, 8);
+                    // Draw car image if available, otherwise draw default
+                    if (imageCache.car && !this.isCrashed) {
+                        ctx.drawImage(imageCache.car, -this.width / 2, -this.height / 2, this.width, this.height);
+                    } else {
+                        // Fallback: default car drawing
+                        ctx.fillStyle = drawColor;
+                        ctx.fillRect(-this.width / 2, -this.height / 2 + 2, this.width, this.height - 4);
+                        ctx.fillStyle = this.color === '#0066cc' ? '#004499' : '#993333';
+                        ctx.fillRect(-this.width / 3, -this.height / 2 + 2, this.width * 0.66, this.height / 2);
+                        ctx.strokeStyle = '#ffffff';
+                        ctx.lineWidth = 1.5;
+                        ctx.strokeRect(-this.width / 2, -this.height / 2 + 2, this.width, this.height - 4);
                     }
-                    
-                    // Wheels (larger for bus)
-                    ctx.fillStyle = '#000';
-                    ctx.beginPath();
-                    ctx.arc(-this.width / 3, this.height / 2, 4, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.beginPath();
-                    ctx.arc(this.width / 3, this.height / 2, 4, 0, Math.PI * 2);
-                    ctx.fill();
-                    
-                    // Wheel rims
-                    ctx.strokeStyle = '#888';
-                    ctx.lineWidth = 1;
-                    ctx.beginPath();
-                    ctx.arc(-this.width / 3, this.height / 2, 4, 0, Math.PI * 2);
-                    ctx.stroke();
-                    ctx.beginPath();
-                    ctx.arc(this.width / 3, this.height / 2, 4, 0, Math.PI * 2);
-                    ctx.stroke();
-                    
-                    ctx.strokeStyle = '#ffffff';
-                    ctx.lineWidth = 2;
-                    ctx.strokeRect(-this.width / 2, -this.height / 2, this.width, this.height);
+                } else if (this.type === 'bus') {
+                    // Draw bus image if available, otherwise draw default
+                    if (imageCache.bus && !this.isCrashed) {
+                        ctx.drawImage(imageCache.bus, -this.width / 2, -this.height / 2, this.width, this.height);
+                    } else {
+                        // Fallback: default bus drawing
+                        ctx.fillStyle = drawColor;
+                        ctx.fillRect(-this.width / 2, -this.height / 2, this.width, this.height);
+                        ctx.strokeStyle = '#ffffff';
+                        ctx.lineWidth = 2;
+                        ctx.strokeRect(-this.width / 2, -this.height / 2, this.width, this.height);
+                    }
                 } else if (this.type === 'truck') {
-                    // Realistic truck - FACING RIGHT
-                    ctx.fillStyle = drawColor;
-                    
-                    // Cargo area (back)
-                    ctx.fillRect(-this.width / 2 + 12, -this.height / 2, this.width / 2 - 12, this.height);
-                    
-                    // Cabin (front, right side)
-                    ctx.fillRect(this.width / 2 - 12, -this.height / 2, 12, this.height);
-                    
-                    // Front windshield (cabin window)
-                    ctx.fillStyle = '#87ceeb';
-                    ctx.fillRect(this.width / 2 - 10, -this.height / 2 + 3, 8, 6);
-                    
-                    // Cargo area detailing
-                    ctx.strokeStyle = '#333';
-                    ctx.lineWidth = 1;
-                    ctx.strokeRect(-this.width / 2 + 12, -this.height / 2, this.width / 2 - 12, this.height);
-                    
-                    // Wheels (large truck wheels)
-                    ctx.fillStyle = '#000';
-                    ctx.beginPath();
-                    ctx.arc(this.width / 2 - 6, this.height / 2, 4, 0, Math.PI * 2);  // Front wheel
-                    ctx.fill();
-                    ctx.beginPath();
-                    ctx.arc(-this.width / 2 + 6, this.height / 2, 4, 0, Math.PI * 2);  // Rear wheel
-                    ctx.fill();
-                    
-                    // Wheel rims
-                    ctx.strokeStyle = '#888';
-                    ctx.lineWidth = 1;
-                    ctx.beginPath();
-                    ctx.arc(this.width / 2 - 6, this.height / 2, 4, 0, Math.PI * 2);
-                    ctx.stroke();
-                    ctx.beginPath();
-                    ctx.arc(-this.width / 2 + 6, this.height / 2, 4, 0, Math.PI * 2);
-                    ctx.stroke();
-                    
-                    ctx.strokeStyle = '#ffffff';
-                    ctx.lineWidth = 2;
-                    ctx.strokeRect(-this.width / 2, -this.height / 2, this.width, this.height);
+                    // Draw truck image if available, otherwise draw default
+                    if (imageCache.truck && !this.isCrashed) {
+                        ctx.drawImage(imageCache.truck, -this.width / 2, -this.height / 2, this.width, this.height);
+                    } else {
+                        // Fallback: default truck drawing
+                        ctx.fillStyle = drawColor;
+                        ctx.fillRect(-this.width / 2, -this.height / 2, this.width, this.height);
+                        ctx.strokeStyle = '#ffffff';
+                        ctx.lineWidth = 2;
+                        ctx.strokeRect(-this.width / 2, -this.height / 2, this.width, this.height);
+                    }
                 } else if (this.type === 'pothole') {
                     // Pothole (dark circular depression)
                     ctx.fillStyle = '#1a1a1a';
@@ -1412,11 +1628,11 @@
                     ctx.fillStyle = drawColor;
                     // Draw wider horizontal barrier (50×15 = wider than tall)
                     ctx.fillRect(-this.width / 2, -this.height / 2, this.width, this.height);
-                    
+
                     // Black and yellow diagonal stripes for visibility
                     ctx.fillStyle = '#000';
                     ctx.lineWidth = 2;
-                    
+
                     // Diagonal stripes
                     for (let i = -2; i < this.width / 8; i++) {
                         ctx.beginPath();
@@ -1424,12 +1640,12 @@
                         ctx.lineTo(-this.width / 2 + i * 8 + this.height, this.height / 2);
                         ctx.stroke();
                     }
-                    
+
                     // Border
                     ctx.strokeStyle = '#333';
                     ctx.lineWidth = 2;
                     ctx.strokeRect(-this.width / 2, -this.height / 2, this.width, this.height);
-                    
+
                     // Reflective end caps
                     ctx.fillStyle = '#ff0000';
                     ctx.fillRect(this.width / 2 - 2, -this.height / 2, 4, this.height);  // Right end cap
@@ -1528,8 +1744,11 @@
                         const dy = obj1.y - vehicle.y;
                         const dist = Math.sqrt(dx * dx + dy * dy);
                         const minDist = (obj1.width + vehicle.width) / 2;
+                        // Only collide if in same lane (within lane width)
+                        const laneDiff = Math.abs(obj1.y - vehicle.y);
+                        const laneThreshold = 50; // Allow some tolerance for same lane
 
-                        if (dist < minDist) {
+                        if (dist < minDist && laneDiff < laneThreshold) {
                             // Both vehicles crash
                             obj1.isCrashed = true;
                             obj1.crashFrame = 0;
@@ -1548,8 +1767,11 @@
                             const dy = obj1.y - obj2.y;
                             const dist = Math.sqrt(dx * dx + dy * dy);
                             const minDist = (obj1.width + obj2.width) / 2;
+                            // Only collide if in same lane (within lane width)
+                            const laneDiff = Math.abs(obj1.y - obj2.y);
+                            const laneThreshold = 50; // Allow some tolerance for same lane
 
-                            if (dist < minDist) {
+                            if (dist < minDist && laneDiff < laneThreshold) {
                                 // Both vehicles crash
                                 obj1.isCrashed = true;
                                 obj1.crashFrame = 0;
@@ -1653,7 +1875,7 @@
             ctx.fill();
         }
 
-        // AI Detection logic with sensors from amv.py
+        // Enhanced AI Detection logic with predictive analysis
         function detectObjects() {
             // Clear all sensors
             vehicle.sensors.front.detectedObjects = [];
@@ -1675,34 +1897,58 @@
 
                 const area = obj.getArea();
                 const occupancy = (area / imageArea) * 100;
-                let distanceLevel = 'SAFE';
 
-                // Use distance-based threat level (in pixels)
-                // This makes sense: closer = more critical
-                if (dist < 60) {
+                // Enhanced distance calculation with velocity prediction
+                let distanceLevel = 'SAFE';
+                let predictedDistance = dist;
+
+                // Predict where object will be in 30 frames (enhanced AI)
+                if (obj.speed > 0) {
+                    const directionX = obj.speed * Math.cos(obj.direction || 0);
+                    const directionY = obj.speed * Math.sin(obj.direction || 0);
+                    const predictedX = obj.x + (directionX * 30);
+                    const predictedY = obj.y + (directionY * 30);
+                    const predictedDx = predictedX - vehicle.x;
+                    const predictedDy = predictedY - vehicle.y;
+                    predictedDistance = Math.sqrt(predictedDx * predictedDx + predictedDy * predictedDy);
+                }
+
+                // Use the more critical of current or predicted distance
+                const effectiveDistance = Math.min(dist, predictedDistance);
+
+                // Distance levels with hysteresis for stability (increased thresholds for safer driving)
+                if (effectiveDistance < 80) {
                     distanceLevel = 'CRITICAL';
-                } else if (dist < 100) {
+                } else if (effectiveDistance < 140) {
                     distanceLevel = 'WARNING';
-                } else if (dist < 150) {
+                } else if (effectiveDistance < 220) {
                     distanceLevel = 'MODERATE';
-                } else if (dist < 200) {
+                } else if (effectiveDistance < 300) {
                     distanceLevel = 'OKAY';
                 }
+
+                // Check if object is moving towards vehicle (closing velocity)
+                const closingVelocity = obj.speed > 0 ? 'moving' : 'stationary';
 
                 const detection = {
                     obj: obj,
                     distance: dist,
+                    predictedDistance: predictedDistance,
+                    effectiveDistance: effectiveDistance,
                     distanceLevel: distanceLevel,
-                    occupancy: occupancy
+                    occupancy: occupancy,
+                    closingVelocity: closingVelocity,
+                    objectSpeed: obj.speed || 0
                 };
 
                 // Determine which sensor detected this object based on position relative to vehicle
+                // More sophisticated sensor placement for better lane detection
                 if (dx > 20) { // Object is ahead (vehicle moving right)
-                    if (Math.abs(dy) < 50) { // Center lane
+                    if (Math.abs(dy) < 40) { // Center lane (tighter)
                         vehicle.sensors.front.detectedObjects.push(detection);
-                    } else if (dy < -50) { // Upper lanes
+                    } else if (dy < -40) { // Upper lanes
                         vehicle.sensors.frontLeft.detectedObjects.push(detection);
-                    } else if (dy > 50) { // Lower lanes
+                    } else if (dy > 40) { // Lower lanes
                         vehicle.sensors.frontRight.detectedObjects.push(detection);
                     }
                 } else if (dx < -20) { // Object is behind
@@ -1715,6 +1961,12 @@
                     }
                 }
             }
+
+            // Sort detections by distance for priority handling
+            vehicle.sensors.front.detectedObjects.sort((a, b) => a.distance - b.distance);
+            vehicle.sensors.back.detectedObjects.sort((a, b) => a.distance - b.distance);
+            vehicle.sensors.frontLeft.detectedObjects.sort((a, b) => a.distance - b.distance);
+            vehicle.sensors.frontRight.detectedObjects.sort((a, b) => a.distance - b.distance);
         }
 
         // Check if obstacle is moving
@@ -1835,9 +2087,10 @@
                     }
                 } else if (obj.type === 'traffic light') {
                     if (obj.lightColor === '#ff0000') {
-                        if (threatLevel !== 'critical') threatLevel = 'warning';
+                        // Red light blocks forward movement but doesn't set threat level
+                        // This allows the car to reverse if blocked, even at a red light
                         blockingFront = true;
-                        redLightBlocking = true; // Flag to prevent lane changes
+                        redLightBlocking = true; // Flag to prevent lane changes and forward movement
                         actions.push({
                             type: 'CRITICAL',
                             text: '🔴 RED LIGHT - STOP AT LINE',
@@ -1914,91 +2167,141 @@
         }
 
         function updateVehicleControl() {
-             // Don't update if crashed
-             if (vehicle.isCrashed) {
-                 vehicle.crashFrame++;
-                 return;
-             }
+            // Don't update if crashed
+            if (vehicle.isCrashed) {
+                vehicle.crashFrame++;
+                return;
+            }
 
-             const { actions, threatLevel, blockingFront, blockingBack, sideBlockFrontLeft, sideBlockFrontRight, redLightBlocking } = getAction();
-             vehicle.actionQueue = actions;
+            const { actions, threatLevel, blockingFront, blockingBack, sideBlockFrontLeft, sideBlockFrontRight, redLightBlocking } = getAction();
+            vehicle.actionQueue = actions;
 
-             // Speed control with more gradual acceleration/deceleration
-             if (threatLevel === 'critical') {
-                 vehicle.emergencyBraking = true;
-                 vehicle.speed = Math.max(0, vehicle.speed - 1.0); // Hard brake
-                 vehicle.isStopped = vehicle.speed < 0.1;
-                 document.getElementById('status').textContent = 'EMERGENCY STOP';
-             } else if (threatLevel === 'warning') {
-                 vehicle.speed = Math.max(0, vehicle.speed - 0.6);
-                 vehicle.isStopped = vehicle.speed < 0.1;
-                 document.getElementById('status').textContent = 'SLOWING DOWN';
-             } else if (threatLevel === 'caution') {
-                 vehicle.speed = Math.min(vehicle.speed + 0.15, vehicle.maxSpeed * 0.65);
-                 document.getElementById('status').textContent = 'CAUTIOUS SPEED';
-             } else {
-                 vehicle.emergencyBraking = false;
-                 vehicle.speed = Math.min(vehicle.speed + 0.12, vehicle.maxSpeed);
-                 vehicle.isStopped = false;
-                 document.getElementById('status').textContent = 'NORMAL OPERATION';
-             }
+            // Speed control with intelligent movement (forward/reverse to avoid obstacles)
+            if (threatLevel === 'critical') {
+                vehicle.emergencyBraking = true;
 
-             // SMART LANE CHANGING - Evaluate all lanes and pick the best one
-             // Prioritize obstacles and maintain smooth driving
-             if (blockingFront && !redLightBlocking && vehicle.speed > 1 && frameCount - vehicle.lastLaneChangeFrame > vehicle.laneChangeCooldown) {
-                 // Score each lane (lower is better)
-                 const lanes_info = [
-                     { lane: 0, name: 'left', blocked: sideBlockFrontLeft },
-                     { lane: 1, name: 'center', blocked: blockingFront },
-                     { lane: 2, name: 'right', blocked: sideBlockFrontRight }
-                 ];
+                // If blocked in front and can't change lanes, reverse to create space
+                if (blockingFront && sideBlockFrontLeft && sideBlockFrontRight) {
+                    vehicle.speed = Math.max(-vehicle.maxSpeed * 0.3, vehicle.speed - 1.5); // Shift into reverse
+                    document.getElementById('status').textContent = 'REVERSING - STUCK';
+                } else {
+                    vehicle.speed = Math.max(0, vehicle.speed - 1.0); // Hard brake
+                    document.getElementById('status').textContent = 'EMERGENCY STOP';
+                }
+                vehicle.isStopped = Math.abs(vehicle.speed) < 0.1;
+            } else if (threatLevel === 'warning') {
+                // If blocked in front and sides blocked, reverse to escape
+                if (blockingFront && sideBlockFrontLeft && sideBlockFrontRight && vehicle.speed < 0.5) {
+                    vehicle.speed = Math.max(-vehicle.maxSpeed * 0.2, vehicle.speed - 0.4);
+                    document.getElementById('status').textContent = 'BACKING UP SLOWLY';
+                } else {
+                    // Aggressive braking when warning threat detected
+                    vehicle.speed = Math.max(0, vehicle.speed - 0.8);
+                    document.getElementById('status').textContent = 'SLOWING DOWN';
+                }
+                vehicle.isStopped = Math.abs(vehicle.speed) < 0.1;
+            } else if (threatLevel === 'caution') {
+                vehicle.emergencyBraking = false;
+                // If obstacle moderately close and can't change lanes, reverse gently
+                if (blockingFront && sideBlockFrontLeft && sideBlockFrontRight) {
+                    vehicle.speed = Math.max(-vehicle.maxSpeed * 0.1, vehicle.speed - 0.15);
+                    document.getElementById('status').textContent = 'BACKING UP GENTLY';
+                } else {
+                    // Reduce speed more aggressively at caution level
+                    vehicle.speed = Math.max(0, vehicle.speed - 0.3);
+                    vehicle.speed = Math.min(vehicle.speed, vehicle.maxSpeed * 0.5);
+                    document.getElementById('status').textContent = 'CAUTIOUS SPEED';
+                }
+            } else {
+                vehicle.emergencyBraking = false;
+                // Resume forward motion if was reversing and path is clear
+                if (vehicle.speed < 0) {
+                    vehicle.speed = Math.min(vehicle.speed + 0.2, 0); // Stop reversing gently
+                } else {
+                    vehicle.speed = Math.min(vehicle.speed + 0.12, vehicle.maxSpeed);
+                }
+                vehicle.isStopped = Math.abs(vehicle.speed) < 0.1;
+                document.getElementById('status').textContent = 'NORMAL OPERATION';
+            }
 
-                 // Find available lanes
-                 const availableLanes = lanes_info.filter(l => !l.blocked);
-                 
-                 if (availableLanes.length > 0) {
-                     // Prefer middle lane for stability, then nearest free lane
-                     let bestLane = vehicle.currentLane;
-                     
-                     if (availableLanes.some(l => l.lane === 1)) {
-                         bestLane = 1; // Prefer center lane
-                     } else {
-                         // Choose closest available lane
-                         bestLane = availableLanes.reduce((closest, current) => 
-                             Math.abs(current.lane - vehicle.currentLane) < Math.abs(closest.lane - vehicle.currentLane) 
-                             ? current : closest
-                         ).lane;
-                     }
+            // SMART LANE CHANGING with predictive analysis - Evaluate all lanes and pick the best one
+            // Prioritize obstacles and maintain smooth driving
+            if (blockingFront && !redLightBlocking && vehicle.speed > 0.5 && frameCount - vehicle.lastLaneChangeFrame > vehicle.laneChangeCooldown) {
+                // Score each lane (lower is better) with enhanced metrics
+                const lanes_info = [
+                    {
+                        lane: 0,
+                        name: 'left',
+                        blocked: sideBlockFrontLeft,
+                        threat: vehicle.sensors.frontLeft.detectedObjects.length > 0 ?
+                            Math.min(...vehicle.sensors.frontLeft.detectedObjects.map(d => d.effectiveDistance)) : 999
+                    },
+                    {
+                        lane: 1,
+                        name: 'center',
+                        blocked: blockingFront,
+                        threat: vehicle.sensors.front.detectedObjects.length > 0 ?
+                            Math.min(...vehicle.sensors.front.detectedObjects.map(d => d.effectiveDistance)) : 999
+                    },
+                    {
+                        lane: 2,
+                        name: 'right',
+                        blocked: sideBlockFrontRight,
+                        threat: vehicle.sensors.frontRight.detectedObjects.length > 0 ?
+                            Math.min(...vehicle.sensors.frontRight.detectedObjects.map(d => d.effectiveDistance)) : 999
+                    }
+                ];
 
-                     if (bestLane !== vehicle.currentLane) {
-                         vehicle.currentLane = bestLane;
-                         vehicle.lastLaneChangeFrame = frameCount;
-                     }
-                 }
-             }
+                // Find available lanes (prefer lanes with greater threat distance)
+                const availableLanes = lanes_info.filter(l => !l.blocked).sort((a, b) => b.threat - a.threat);
 
-             // Smooth lateral movement to target lane with slight sway
-             vehicle.lateralAvoidance = vehicle.lateralAvoidance * 0.95; // Damping
-             vehicle.y = lanes[vehicle.currentLane].y + vehicle.lateralAvoidance;
+                if (availableLanes.length > 0) {
+                    // Prefer middle lane for stability if safe, then furthest threat lane
+                    let bestLane = vehicle.currentLane;
 
-             // Vehicle movement (horizontal - moving forward on road)
-             // Reverse logic: can back up slightly if needed to avoid obstacles
-             if (vehicle.speed > 0) {
-                 vehicle.x += vehicle.speed;
-                 if (vehicle.x > canvas.width) {
-                     vehicle.x = 0;
-                     objects.length = 0;
-                 }
-             } else if (vehicle.speed < 0 && !blockingBack && Math.abs(vehicle.speed) > 0.5) {
-                 // Can reverse slowly if back is clear and speed is meaningful
-                 vehicle.x += vehicle.speed;
-             } else if (vehicle.speed > 0.05) {
-                 // Minimal forward creep
-                 vehicle.x += vehicle.speed * 0.3;
-             } else {
-                 vehicle.speed = 0; // Full stop
-             }
-         }
+                    if (availableLanes.some(l => l.lane === 1 && !l.blocked)) {
+                        bestLane = 1; // Prefer center lane if available
+                    } else {
+                        // Choose lane with highest threat distance (safest)
+                        bestLane = availableLanes[0].lane;
+                    }
+
+                    if (bestLane !== vehicle.currentLane) {
+                        vehicle.currentLane = bestLane;
+                        vehicle.lastLaneChangeFrame = frameCount;
+                    }
+                }
+            }
+
+            // Smooth lateral movement to target lane with slight sway
+            vehicle.lateralAvoidance = vehicle.lateralAvoidance * 0.95; // Damping
+            vehicle.y = lanes[vehicle.currentLane].y + vehicle.lateralAvoidance;
+
+            // Vehicle movement (horizontal - moving forward on road)
+            // Red light blocks forward movement but allows reverse to escape obstacles
+            if (vehicle.speed > 0) {
+                // Forward movement - blocked by red lights
+                if (redLightBlocking) {
+                    vehicle.speed = 0; // Stop at red light
+                } else {
+                    vehicle.x += vehicle.speed;
+                    if (vehicle.x > canvas.width) {
+                        vehicle.x = 0;
+                        objects.length = 0;
+                    }
+                }
+            } else if (vehicle.speed < 0 && !blockingBack && Math.abs(vehicle.speed) > 0.5) {
+                // Reverse movement - always allowed (red lights don't block backing up)
+                vehicle.x += vehicle.speed;
+            } else if (vehicle.speed > 0.05) {
+                // Minimal forward creep - still blocked by red lights
+                if (!redLightBlocking) {
+                    vehicle.x += vehicle.speed * 0.3;
+                }
+            } else {
+                vehicle.speed = 0; // Full stop
+            }
+        }
 
         function updateActionLog() {
             const log = document.getElementById('actionLog');
@@ -2040,6 +2343,98 @@
                     log.appendChild(li);
                 }
             }
+        }
+
+        // Advanced AI Metrics update
+        function updateAdvancedAIMetrics() {
+            // Calculate AI mode
+            let mode = 'NORMAL';
+            let modeClass = 'normal';
+
+            const totalDetections =
+                vehicle.sensors.front.detectedObjects.length +
+                vehicle.sensors.back.detectedObjects.length +
+                vehicle.sensors.frontLeft.detectedObjects.length +
+                vehicle.sensors.frontRight.detectedObjects.length;
+
+            if (vehicle.isStopped) {
+                mode = 'STOPPED';
+            } else if (vehicle.emergencyBraking) {
+                mode = 'EMERGENCY';
+                modeClass = 'aggressive';
+            } else if (vehicle.speed < vehicle.maxSpeed * 0.4) {
+                mode = 'CAUTIOUS';
+                modeClass = 'cautious';
+            }
+
+            document.getElementById('aiMode').textContent = mode;
+            document.getElementById('aiMode').className = `mode-indicator ${modeClass}`;
+
+            // Calculate threat level percentage
+            let threatLevel = 0;
+            let threatText = 'LOW';
+
+            for (const detection of vehicle.sensors.front.detectedObjects) {
+                if (detection.distanceLevel === 'CRITICAL') threatLevel = 100;
+                else if (detection.distanceLevel === 'WARNING') threatLevel = Math.max(threatLevel, 75);
+                else if (detection.distanceLevel === 'MODERATE') threatLevel = Math.max(threatLevel, 50);
+                else threatLevel = Math.max(threatLevel, 25);
+            }
+
+            if (threatLevel >= 75) threatText = 'CRITICAL';
+            else if (threatLevel >= 50) threatText = 'HIGH';
+            else if (threatLevel >= 25) threatText = 'MEDIUM';
+
+            document.getElementById('threatLevel').textContent = threatText;
+            document.getElementById('threatLevel').style.color = threatLevel >= 75 ? '#dc3545' : threatLevel >= 50 ? '#ffc107' : '#28a745';
+            document.getElementById('threatFillBar').style.width = threatLevel + '%';
+
+            // Calculate reaction time (simulated - based on detections)
+            const baseReactionTime = 100;
+            const detectionBonus = Math.min(totalDetections * 10, 50);
+            const reactionTime = baseReactionTime - detectionBonus;
+            document.getElementById('reactionTime').textContent = Math.max(50, reactionTime) + 'ms';
+
+            // Detection accuracy (simulated)
+            const accuracy = Math.min(95 + (vehicle.sensors.front.detectedObjects.length * 0.5), 99.9);
+            document.getElementById('detectionAccuracy').textContent = accuracy.toFixed(1) + '%';
+
+            // Update sensor range info
+            document.getElementById('sensorRange').textContent = vehicle.detectionRadius + 'px';
+
+            // Predictive Behavior
+            let collisionRisk = 0;
+            let pathObstruction = 'Clear';
+
+            // Calculate collision risk based on front detections
+            for (const detection of vehicle.sensors.front.detectedObjects) {
+                if (detection.distanceLevel === 'CRITICAL') {
+                    collisionRisk = Math.min(collisionRisk + 35, 100);
+                } else if (detection.distanceLevel === 'WARNING') {
+                    collisionRisk = Math.min(collisionRisk + 20, 100);
+                } else if (detection.distanceLevel === 'MODERATE') {
+                    collisionRisk = Math.min(collisionRisk + 8, 100);
+                }
+            }
+
+            if (vehicle.sensors.front.detectedObjects.length > 0) {
+                pathObstruction = 'Obstructed';
+            }
+
+            document.getElementById('collisionRisk').textContent = Math.round(collisionRisk) + '%';
+            document.getElementById('pathObstruction').textContent = pathObstruction;
+
+            // Safe distance calculation
+            let minDist = Infinity;
+            for (const detection of vehicle.sensors.front.detectedObjects) {
+                minDist = Math.min(minDist, detection.distance);
+            }
+            document.getElementById('safeDistance').textContent = minDist === Infinity ? '--' : minDist.toFixed(0) + 'px';
+
+            // Decision confidence (based on detection clarity)
+            let confidence = 95;
+            if (totalDetections > 5) confidence = Math.max(70, confidence - (totalDetections - 5) * 2);
+            document.getElementById('decisionConfidence').textContent = Math.round(confidence) + '%';
         }
 
         function updateStats() {
@@ -2166,16 +2561,44 @@
                     }
                 }
             } else {
-                ctx.fillStyle = vehicle.emergencyBraking ? '#dc3545' : '#0066cc';
-                ctx.fillRect(-vehicle.width / 2, -vehicle.height / 2, vehicle.width, vehicle.height);
-                ctx.strokeStyle = '#ffffff';
-                ctx.lineWidth = 2;
-                ctx.strokeRect(-vehicle.width / 2, -vehicle.height / 2, vehicle.width, vehicle.height);
+                // Draw main vehicle image if available, otherwise draw default
+                if (imageCache.mainVehicle) {
+                    ctx.drawImage(imageCache.mainVehicle, -vehicle.width / 2, -vehicle.height / 2, vehicle.width, vehicle.height);
+                } else {
+                    // Fallback: default car drawing
+                    const carColor = vehicle.emergencyBraking ? '#dc3545' : '#0066cc';
 
-                // Draw headlights
-                ctx.fillStyle = '#ffff99';
-                ctx.fillRect(-vehicle.width / 4, -vehicle.height / 2, vehicle.width / 8, 3);
-                ctx.fillRect(vehicle.width / 4, -vehicle.height / 2, vehicle.width / 8, 3);
+                    // Main body
+                    ctx.fillStyle = carColor;
+                    ctx.fillRect(-vehicle.width / 2, -vehicle.height / 2 + 4, vehicle.width, vehicle.height - 8);
+
+                    // Cabin/Windows area (darker)
+                    ctx.fillStyle = '#00ccff';
+                    ctx.fillRect(-vehicle.width / 3, -vehicle.height / 2 + 8, vehicle.width * 0.66, vehicle.height / 2);
+
+                    // Wheels
+                    ctx.fillStyle = '#1a1a1a';
+                    ctx.beginPath();
+                    ctx.arc(-vehicle.width / 3, vehicle.height / 2 - 2, 4, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.arc(vehicle.width / 3, vehicle.height / 2 - 2, 4, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Headlights (bright)
+                    ctx.fillStyle = '#ffff99';
+                    ctx.beginPath();
+                    ctx.arc(-vehicle.width / 4, -vehicle.height / 2 + 2, 2.5, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.arc(vehicle.width / 4, -vehicle.height / 2 + 2, 2.5, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Border
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(-vehicle.width / 2, -vehicle.height / 2 + 4, vehicle.width, vehicle.height - 8);
+                }
             }
 
             ctx.restore();
@@ -2269,6 +2692,7 @@
                 updateVehicleControl();
                 updateActionLog();
                 updateStats();
+                updateAdvancedAIMetrics();
             }
 
             requestAnimationFrame(animate);
@@ -2372,16 +2796,16 @@
             }
         });
         makeSpawnButton('spawnBus', 'bus');
-         makeSpawnButton('spawnTruck', 'truck');
-         makeSpawnButton('spawnStopSign', 'stop sign');
-         makeSpawnButton('spawnTrafficLight', 'traffic light');
-         makeSpawnButton('spawnYield', 'yield');
-         makeSpawnButton('spawnBuilding', 'building');
-         makeSpawnButton('spawnTree', 'tree');
-         makeSpawnButton('spawnPole', 'pole');
-         makeSpawnButton('spawnCone', 'cone');
-         makeSpawnButton('spawnBarrier', 'barrier');
-         makeSpawnButton('spawnPothole', 'pothole');
+        makeSpawnButton('spawnTruck', 'truck');
+        makeSpawnButton('spawnStopSign', 'stop sign');
+        makeSpawnButton('spawnTrafficLight', 'traffic light');
+        makeSpawnButton('spawnYield', 'yield');
+        makeSpawnButton('spawnBuilding', 'building');
+        makeSpawnButton('spawnTree', 'tree');
+        makeSpawnButton('spawnPole', 'pole');
+        makeSpawnButton('spawnCone', 'cone');
+        makeSpawnButton('spawnBarrier', 'barrier');
+        makeSpawnButton('spawnPothole', 'pothole');
 
         // Traffic jam spawn
         document.getElementById('spawnTrafficJam').addEventListener('click', () => {
@@ -2500,4 +2924,6 @@
     </script>
 
 
-</body></html>
+</body>
+
+</html>
