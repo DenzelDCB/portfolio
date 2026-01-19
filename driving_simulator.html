@@ -633,13 +633,17 @@
                     <span id="threatCount">0</span>
                 </div>
                 <div class="stat-row">
-                    <span>Nearest Distance:</span>
-                    <span id="nearestDistance">188px</span>
-                </div>
-                <div class="stat-row">
-                    <span>AI Status:</span>
-                    <span id="status">SLOWING DOWN</span>
-                </div>
+                     <span>Distance - Front:</span>
+                     <span id="frontDistance">Safe</span>
+                 </div>
+                 <div class="stat-row">
+                     <span>Distance - Back:</span>
+                     <span id="backDistance">Safe</span>
+                 </div>
+                 <div class="stat-row">
+                     <span>AI Status:</span>
+                     <span id="status">SLOWING DOWN</span>
+                 </div>
             </div>
 
             <div class="traffic-light-control">
@@ -980,41 +984,44 @@
                     let shouldSlow = false;
                     const detectionDist = 200;
 
-                    // Check for stop signs
-                    for (const obj of objects) {
-                        if (obj.type === 'stop sign') {
-                            const dist = this.x - obj.x;
-                            if (dist < 0 && dist > -detectionDist && Math.abs(this.y - obj.y) < 100) {
-                                shouldStop = true;
-                                break;
-                            }
-                        }
-                    }
+                    // Check for stop signs (only in same lane)
+                     for (const obj of objects) {
+                         if (obj.type === 'stop sign') {
+                             const dist = this.x - obj.x;
+                             const laneDiff = Math.abs(this.y - obj.y);
+                             if (dist < 0 && dist > -detectionDist && laneDiff < 50) {
+                                 shouldStop = true;
+                                 break;
+                             }
+                         }
+                     }
 
-                    // Check for red/yellow traffic lights
-                    for (const obj of objects) {
-                        if (obj.type === 'traffic light') {
-                            const dist = this.x - obj.x;
-                            if (dist < 0 && dist > -detectionDist && Math.abs(this.y - obj.y) < 100) {
-                                if (obj.lightColor === '#ff0000') {
-                                    shouldStop = true;
-                                    break;
-                                } else if (obj.lightColor === '#ffaa00') {
-                                    shouldSlow = true;
-                                }
-                            }
-                        }
-                    }
+                     // Check for red/yellow traffic lights (only in same lane)
+                     for (const obj of objects) {
+                         if (obj.type === 'traffic light') {
+                             const dist = this.x - obj.x;
+                             const laneDiff = Math.abs(this.y - obj.y);
+                             if (dist < 0 && dist > -detectionDist && laneDiff < 50) {
+                                 if (obj.lightColor === '#ff0000') {
+                                     shouldStop = true;
+                                     break;
+                                 } else if (obj.lightColor === '#ffaa00') {
+                                     shouldSlow = true;
+                                 }
+                             }
+                         }
+                     }
 
-                    // Check for yield signs
-                    for (const obj of objects) {
-                        if (obj.type === 'yield') {
-                            const dist = this.x - obj.x;
-                            if (dist < 0 && dist > -detectionDist && Math.abs(this.y - obj.y) < 100) {
-                                shouldSlow = true;
-                            }
-                        }
-                    }
+                     // Check for yield signs (only in same lane)
+                     for (const obj of objects) {
+                         if (obj.type === 'yield') {
+                             const dist = this.x - obj.x;
+                             const laneDiff = Math.abs(this.y - obj.y);
+                             if (dist < 0 && dist > -detectionDist && laneDiff < 50) {
+                                 shouldSlow = true;
+                             }
+                         }
+                     }
 
                     // Check for obstacles (building, tree, pole, cone, barrier, pothole)
                     for (const obj of objects) {
@@ -1618,14 +1625,21 @@
             const sensorLength = 200;
 
             for (const obj of objects) {
-                const dx = obj.x - vehicle.x;
-                const dy = obj.y - vehicle.y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
+                 const dx = obj.x - vehicle.x;
+                 const dy = obj.y - vehicle.y;
+                 const dist = Math.sqrt(dx * dx + dy * dy);
 
-                if (dist > vehicle.detectionRadius) continue;
+                 if (dist > vehicle.detectionRadius) continue;
 
-                const area = obj.getArea();
-                const occupancy = (area / imageArea) * 100;
+                 // For signs and obstacles, only detect if in same lane
+                 const isSign = ['stop sign', 'traffic light', 'yield'].includes(obj.type);
+                 const isObstacle = ['building', 'tree', 'pole', 'cone', 'barrier', 'pothole'].includes(obj.type);
+                 if ((isSign || isObstacle) && obj.laneIndex !== null && obj.laneIndex !== vehicle.currentLane) {
+                     continue; // Skip objects not in current lane
+                 }
+
+                 const area = obj.getArea();
+                 const occupancy = (area / imageArea) * 100;
 
                 // Enhanced distance calculation with velocity prediction
                 let distanceLevel = 'SAFE';
@@ -1799,61 +1813,75 @@
                         });
                     }
                 } else if (obj.type === 'stop sign') {
-                    if (distanceLevel === 'CRITICAL' || distanceLevel === 'WARNING') {
-                        if (threatLevel !== 'critical') threatLevel = 'warning';
-                        blockingFront = true;
-                        actions.push({
-                            type: 'CRITICAL',
-                            text: '🛑 STOP SIGN - COME TO HALT',
-                            priority: 1
-                        });
-                    } else if (distanceLevel === 'MODERATE' || distanceLevel === 'OKAY') {
-                        actions.push({
-                            type: 'INFO',
-                            text: '🛑 STOP SIGN DETECTED AHEAD - APPROACH CAUTIOUSLY',
-                            priority: 3
-                        });
+                    // Only affect if in same lane or close to vehicle's lane
+                    const laneDiff = Math.abs(obj.y - vehicle.y);
+                    const samelane = laneDiff < 50;
+                    if (samelane) {
+                        if (distanceLevel === 'CRITICAL' || distanceLevel === 'WARNING') {
+                            if (threatLevel !== 'critical') threatLevel = 'warning';
+                            // Stop sign should NOT cause lane dodging, only stopping
+                            actions.push({
+                                type: 'CRITICAL',
+                                text: '🛑 STOP SIGN - COME TO HALT',
+                                priority: 1
+                            });
+                        } else if (distanceLevel === 'MODERATE' || distanceLevel === 'OKAY') {
+                            actions.push({
+                                type: 'INFO',
+                                text: '🛑 STOP SIGN DETECTED AHEAD - APPROACH CAUTIOUSLY',
+                                priority: 3
+                            });
+                        }
                     }
                 } else if (obj.type === 'traffic light') {
-                    if (obj.lightColor === '#ff0000') {
-                        // Red light blocks forward movement but doesn't set threat level
-                        // This allows the car to reverse if blocked, even at a red light
-                        blockingFront = true;
-                        redLightBlocking = true; // Flag to prevent lane changes and forward movement
-                        actions.push({
-                            type: 'CRITICAL',
-                            text: '🔴 RED LIGHT - STOP AT LINE',
-                            priority: 1
-                        });
-                    } else if (obj.lightColor === '#ffaa00') {
-                        if (threatLevel === 'safe') threatLevel = 'caution';
-                        actions.push({
-                            type: 'WARNING',
-                            text: '🟡 YELLOW LIGHT - SLOW DOWN - PREPARE TO STOP',
-                            priority: 2
-                        });
-                    } else if (obj.lightColor === '#28a745') {
-                        actions.push({
-                            type: 'INFO',
-                            text: '🟢 GREEN LIGHT - PROCEED WITH CAUTION',
-                            priority: 3
-                        });
+                    // Only affect if in same lane or close to vehicle's lane
+                    const laneDiff = Math.abs(obj.y - vehicle.y);
+                    const samelane = laneDiff < 50;
+                    if (samelane) {
+                        if (obj.lightColor === '#ff0000') {
+                            // Red light blocks forward movement but doesn't set threat level
+                            // This allows the car to reverse if blocked, even at a red light
+                            redLightBlocking = true; // Flag to prevent lane changes and forward movement
+                            actions.push({
+                                type: 'CRITICAL',
+                                text: '🔴 RED LIGHT - STOP AT LINE',
+                                priority: 1
+                            });
+                        } else if (obj.lightColor === '#ffaa00') {
+                            if (threatLevel === 'safe') threatLevel = 'caution';
+                            actions.push({
+                                type: 'WARNING',
+                                text: '🟡 YELLOW LIGHT - SLOW DOWN - PREPARE TO STOP',
+                                priority: 2
+                            });
+                        } else if (obj.lightColor === '#28a745') {
+                            actions.push({
+                                type: 'INFO',
+                                text: '🟢 GREEN LIGHT - PROCEED WITH CAUTION',
+                                priority: 3
+                            });
+                        }
                     }
                 } else if (obj.type === 'yield') {
-                    if (distanceLevel === 'CRITICAL' || distanceLevel === 'WARNING') {
-                        if (threatLevel !== 'critical') threatLevel = 'warning';
-                        blockingFront = true;
-                        actions.push({
-                            type: 'WARNING',
-                            text: '🚧 YIELD SIGN - LET OTHERS PASS',
-                            priority: 2
-                        });
-                    } else if (distanceLevel === 'MODERATE' || distanceLevel === 'OKAY') {
-                        actions.push({
-                            type: 'INFO',
-                            text: '🚧 YIELD SIGN AHEAD - PREPARE TO YIELD',
-                            priority: 3
-                        });
+                    // Only affect if in same lane or close to vehicle's lane
+                    const laneDiff = Math.abs(obj.y - vehicle.y);
+                    const samelane = laneDiff < 50;
+                    if (samelane) {
+                        if (distanceLevel === 'CRITICAL' || distanceLevel === 'WARNING') {
+                            if (threatLevel !== 'critical') threatLevel = 'warning';
+                            // Yield sign should NOT cause lane dodging, only slowing
+                            actions.push({
+                                type: 'WARNING',
+                                text: '🚧 YIELD SIGN - LET OTHERS PASS',
+                                priority: 2
+                            });
+                        } else if (distanceLevel === 'MODERATE' || distanceLevel === 'OKAY') {
+                            actions.push({
+                                type: 'INFO',
+                                text: '🚧 YIELD SIGN AHEAD - PREPARE TO YIELD',
+                                priority: 3
+                            });
+                        }
                     }
                 }
             }
@@ -2166,34 +2194,44 @@
         }
 
         function updateStats() {
-            const allDetected = [
-                ...vehicle.sensors.front.detectedObjects,
-                ...vehicle.sensors.frontLeft.detectedObjects,
-                ...vehicle.sensors.frontRight.detectedObjects,
-                ...vehicle.sensors.left.detectedObjects,
-                ...vehicle.sensors.right.detectedObjects,
-                ...vehicle.sensors.back.detectedObjects
-            ];
+             const allDetected = [
+                 ...vehicle.sensors.front.detectedObjects,
+                 ...vehicle.sensors.frontLeft.detectedObjects,
+                 ...vehicle.sensors.frontRight.detectedObjects,
+                 ...vehicle.sensors.left.detectedObjects,
+                 ...vehicle.sensors.right.detectedObjects,
+                 ...vehicle.sensors.back.detectedObjects
+             ];
 
-            const threatCount = allDetected.filter(d =>
-                d.distanceLevel === 'CRITICAL' || d.distanceLevel === 'CLOSE'
-            ).length;
+             const threatCount = allDetected.filter(d =>
+                 d.distanceLevel === 'CRITICAL' || d.distanceLevel === 'CLOSE'
+             ).length;
 
-            document.getElementById('objectCount').textContent = allDetected.length;
-            document.getElementById('threatCount').textContent = threatCount;
+             document.getElementById('objectCount').textContent = allDetected.length;
+             document.getElementById('threatCount').textContent = threatCount;
 
-            if (allDetected.length > 0) {
-                const nearest = allDetected[0];
-                const distStr = nearest.distance.toFixed(0) + 'px';
-                document.getElementById('nearestDistance').textContent = distStr;
-            } else {
-                document.getElementById('nearestDistance').textContent = 'Safe';
-            }
+             // Front sensor distance
+             if (vehicle.sensors.front.detectedObjects.length > 0) {
+                 const frontNearest = vehicle.sensors.front.detectedObjects[0];
+                 const frontDistStr = frontNearest.distance.toFixed(0) + 'px';
+                 document.getElementById('frontDistance').textContent = frontDistStr;
+             } else {
+                 document.getElementById('frontDistance').textContent = 'Safe';
+             }
 
-            const speedPercent = (vehicle.speed / vehicle.maxSpeed) * 100;
-            document.getElementById('speedValue').textContent = Math.round(vehicle.speed * 10) + ' km/h';
-            document.getElementById('speedFill').style.width = speedPercent + '%';
-        }
+             // Back sensor distance
+             if (vehicle.sensors.back.detectedObjects.length > 0) {
+                 const backNearest = vehicle.sensors.back.detectedObjects[0];
+                 const backDistStr = backNearest.distance.toFixed(0) + 'px';
+                 document.getElementById('backDistance').textContent = backDistStr;
+             } else {
+                 document.getElementById('backDistance').textContent = 'Safe';
+             }
+
+             const speedPercent = (vehicle.speed / vehicle.maxSpeed) * 100;
+             document.getElementById('speedValue').textContent = Math.round(vehicle.speed * 10) + ' km/h';
+             document.getElementById('speedFill').style.width = speedPercent + '%';
+         }
 
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -2227,15 +2265,31 @@
             ctx.lineTo(canvas.width, lanes[lanes.length - 1].y + lanes[lanes.length - 1].width / 2);
             ctx.stroke();
 
-            // Update and draw objects
-            for (let i = objects.length - 1; i >= 0; i--) {
-                const shouldKeep = objects[i].update();
-                if (!shouldKeep) {
-                    objects.splice(i, 1);
-                } else {
-                    objects[i].draw(ctx);
-                }
-            }
+            // Update and draw objects (only for current lane)
+             for (let i = objects.length - 1; i >= 0; i--) {
+                 const shouldKeep = objects[i].update();
+                 if (!shouldKeep) {
+                     objects.splice(i, 1);
+                 } else {
+                     // Only draw if in current lane or is a vehicle
+                     const isVehicle = ['car', 'bus', 'truck'].includes(objects[i].type);
+                     const isPerson = objects[i].type === 'person';
+                     const isSign = ['stop sign', 'traffic light', 'yield'].includes(objects[i].type);
+                     
+                     if (isVehicle || isPerson) {
+                         // Vehicles and pedestrians always show
+                         objects[i].draw(ctx);
+                     } else if (isSign || ['building', 'tree', 'pole', 'cone', 'barrier', 'pothole'].includes(objects[i].type)) {
+                         // Signs and obstacles only show in their lane
+                         const laneIndex = objects[i].laneIndex;
+                         if (laneIndex === null || laneIndex === vehicle.currentLane) {
+                             objects[i].draw(ctx);
+                         }
+                     } else {
+                         objects[i].draw(ctx);
+                     }
+                 }
+             }
 
 
 
@@ -2489,19 +2543,19 @@
                     alert('Cannot place vehicle here - it would overlap with another vehicle!');
                     return;
                 }
-            } else if (['cone', 'barrier', 'pothole'].includes(spawnMode)) {
-                // These obstacles can go in lanes too
-                let closestLane = 0;
-                let minDist = Math.abs(y - lanes[0].y);
-                for (let i = 1; i < lanes.length; i++) {
-                    const dist = Math.abs(y - lanes[i].y);
-                    if (dist < minDist) {
-                        minDist = dist;
-                        closestLane = i;
-                    }
-                }
-                objects.push(new DrivingObject(spawnMode, x, lanes[closestLane].y, 0, closestLane));
-            } else if (spawnMode === 'custom_person') {
+            } else if (['cone', 'barrier', 'pothole', 'stop sign', 'traffic light', 'yield'].includes(spawnMode)) {
+                 // These obstacles and signs can go in lanes too
+                 let closestLane = 0;
+                 let minDist = Math.abs(y - lanes[0].y);
+                 for (let i = 1; i < lanes.length; i++) {
+                     const dist = Math.abs(y - lanes[i].y);
+                     if (dist < minDist) {
+                         minDist = dist;
+                         closestLane = i;
+                     }
+                 }
+                 objects.push(new DrivingObject(spawnMode, x, lanes[closestLane].y, 0, closestLane));
+             } else if (spawnMode === 'custom_person') {
                 // Handle custom person with name and color
                 const nameInput = document.getElementById('personName');
                 const colorInput = document.getElementById('personColor');
