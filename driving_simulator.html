@@ -1023,9 +1023,18 @@
                          }
                      }
 
-                    // Check for obstacles (building, tree, pole, cone, barrier, pothole)
+                    // Check for obstacles (building, tree, pole, cone, barrier, pothole) - only in same lane
                     for (const obj of objects) {
                         if (['building', 'tree', 'pole', 'cone', 'barrier', 'pothole'].includes(obj.type)) {
+                            // Only check if in same lane
+                            const laneDiff = Math.abs(this.y - obj.y);
+                            if (obj.laneIndex !== null && obj.laneIndex !== this.laneIndex) {
+                                continue; // Skip obstacle in different lane
+                            }
+                            if (laneDiff >= 50) {
+                                continue; // Skip if not in same lane range
+                            }
+                            
                             const dx = this.x - obj.x;
                             const dy = this.y - obj.y;
                             const dist = Math.sqrt(dx * dx + dy * dy);
@@ -2560,6 +2569,18 @@
                 person.name = nameInput.value || 'Person';
                 person.color = colorInput.value;
                 objects.push(person);
+            } else if (['building', 'tree', 'pole'].includes(spawnMode)) {
+                // Building, tree, pole also need lane assignment
+                let closestLane = 0;
+                let minDist = Math.abs(y - lanes[0].y);
+                for (let i = 1; i < lanes.length; i++) {
+                    const dist = Math.abs(y - lanes[i].y);
+                    if (dist < minDist) {
+                        minDist = dist;
+                        closestLane = i;
+                    }
+                }
+                objects.push(new DrivingObject(spawnMode, x, lanes[closestLane].y, 0, closestLane));
             } else {
                 objects.push(new DrivingObject(spawnMode, x, y, spawnMode === 'person' ? 2 : 0));
             }
