@@ -1668,14 +1668,14 @@
                 // Use the more critical of current or predicted distance
                 const effectiveDistance = Math.min(dist, predictedDistance);
 
-                // Distance levels with hysteresis for stability (increased thresholds for safer driving)
-                if (effectiveDistance < 80) {
+                // Distance levels with hysteresis for stability
+                if (effectiveDistance < 90) {
                     distanceLevel = 'CRITICAL';
                 } else if (effectiveDistance < 140) {
                     distanceLevel = 'WARNING';
-                } else if (effectiveDistance < 220) {
+                } else if (effectiveDistance < 170) {
                     distanceLevel = 'MODERATE';
-                } else if (effectiveDistance < 300) {
+                } else if (effectiveDistance < 195) {
                     distanceLevel = 'OKAY';
                 }
 
@@ -2481,32 +2481,41 @@
         }
 
         // Click to spawn or delete
-        // Check if position collides with existing vehicles
-        function canPlaceVehicle(x, y, width, height) {
-            // Check collision with main vehicle
-            const dx = x - vehicle.x;
-            const dy = y - vehicle.y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            const minDist = (width + vehicle.width) / 2;
-            if (dist < minDist) {
-                return false;
-            }
-            
-            // Check collision with other vehicles
-            for (let i = 0; i < objects.length; i++) {
-                const obj = objects[i];
-                if (['car', 'bus', 'truck'].includes(obj.type)) {
-                    const dx = x - obj.x;
-                    const dy = y - obj.y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-                    const minDist = (width + obj.width) / 2;
-                    if (dist < minDist) {
-                        return false;
-                    }
-                }
-            }
-            return true;
-        }
+         // Check if position collides with existing vehicles (only in same lane)
+         function canPlaceVehicle(x, y, width, height, laneIndex) {
+             // Check collision with main vehicle (only if in same lane)
+             const mainVehicleLaneDiff = Math.abs(y - vehicle.y);
+             if (mainVehicleLaneDiff < 50) {
+                 const dx = x - vehicle.x;
+                 const dy = y - vehicle.y;
+                 const dist = Math.sqrt(dx * dx + dy * dy);
+                 const minDist = (width + vehicle.width) / 2;
+                 if (dist < minDist) {
+                     return false;
+                 }
+             }
+             
+             // Check collision with other vehicles (only in same lane)
+             for (let i = 0; i < objects.length; i++) {
+                 const obj = objects[i];
+                 if (['car', 'bus', 'truck'].includes(obj.type)) {
+                     // Only check vehicles in same lane
+                     const laneDiff = Math.abs(y - obj.y);
+                     if (laneDiff >= 50) {
+                         continue; // Different lane, skip
+                     }
+                     
+                     const dx = x - obj.x;
+                     const dy = y - obj.y;
+                     const dist = Math.sqrt(dx * dx + dy * dy);
+                     const minDist = (width + obj.width) / 2;
+                     if (dist < minDist) {
+                         return false;
+                     }
+                 }
+             }
+             return true;
+         }
 
         canvas.addEventListener('click', (e) => {
             const rect = canvas.getBoundingClientRect();
@@ -2543,10 +2552,10 @@
                 }
                 // Check if vehicle can be placed without collision
                 const testVehicle = spawnMode === 'car' ? { width: 60, height: 35 } : spawnMode === 'bus' ? { width: 100, height: 45 } : { width: 90, height: 50 };
-                if (canPlaceVehicle(x, lanes[closestLane].y, testVehicle.width, testVehicle.height)) {
+                if (canPlaceVehicle(x, lanes[closestLane].y, testVehicle.width, testVehicle.height, closestLane)) {
                     objects.push(new DrivingObject(spawnMode, x, lanes[closestLane].y, 4, closestLane));
                 } else {
-                    alert('Cannot place vehicle here - it would overlap with another vehicle!');
+                    alert('Cannot place vehicle here - it would overlap with another vehicle in the same lane!');
                     return;
                 }
             } else if (['cone', 'barrier', 'pothole', 'stop sign', 'traffic light', 'yield'].includes(spawnMode)) {
