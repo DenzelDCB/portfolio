@@ -982,46 +982,55 @@
                     // Check for traffic signs and obstacles ahead
                     let shouldStop = false;
                     let shouldSlow = false;
-                    const detectionDist = 200;
+                    const stopDist = 15;
+                    const slowDist = 80;
 
                     // Check for stop signs (only in same lane)
-                     for (const obj of objects) {
-                         if (obj.type === 'stop sign') {
-                             const dist = this.x - obj.x;
-                             const laneDiff = Math.abs(this.y - obj.y);
-                             if (dist < 0 && dist > -detectionDist && laneDiff < 50) {
-                                 shouldStop = true;
-                                 break;
-                             }
-                         }
-                     }
+                      for (const obj of objects) {
+                          if (obj.type === 'stop sign') {
+                              const dist = this.x - obj.x;
+                              const laneDiff = Math.abs(this.y - obj.y);
+                              if (dist < 0 && dist > -slowDist && laneDiff < 50) {
+                                  if (dist > -stopDist) {
+                                      shouldStop = true;
+                                      break;
+                                  } else {
+                                      shouldSlow = true;
+                                  }
+                              }
+                          }
+                      }
 
-                     // Check for red/yellow traffic lights (only in same lane)
-                     for (const obj of objects) {
-                         if (obj.type === 'traffic light') {
-                             const dist = this.x - obj.x;
-                             const laneDiff = Math.abs(this.y - obj.y);
-                             if (dist < 0 && dist > -detectionDist && laneDiff < 50) {
-                                 if (obj.lightColor === '#ff0000') {
-                                     shouldStop = true;
-                                     break;
-                                 } else if (obj.lightColor === '#ffaa00') {
-                                     shouldSlow = true;
-                                 }
-                             }
-                         }
-                     }
+                      // Check for red/yellow traffic lights (only in same lane)
+                      for (const obj of objects) {
+                          if (obj.type === 'traffic light') {
+                              const dist = this.x - obj.x;
+                              const laneDiff = Math.abs(this.y - obj.y);
+                              if (dist < 0 && dist > -slowDist && laneDiff < 50) {
+                                  if (obj.lightColor === '#ff0000') {
+                                      if (dist > -stopDist) {
+                                          shouldStop = true;
+                                          break;
+                                      } else {
+                                          shouldSlow = true;
+                                      }
+                                  } else if (obj.lightColor === '#ffaa00') {
+                                      shouldSlow = true;
+                                  }
+                              }
+                          }
+                      }
 
-                     // Check for yield signs (only in same lane)
-                     for (const obj of objects) {
-                         if (obj.type === 'yield') {
-                             const dist = this.x - obj.x;
-                             const laneDiff = Math.abs(this.y - obj.y);
-                             if (dist < 0 && dist > -detectionDist && laneDiff < 50) {
-                                 shouldSlow = true;
-                             }
-                         }
-                     }
+                      // Check for yield signs (only in same lane)
+                      for (const obj of objects) {
+                          if (obj.type === 'yield') {
+                              const dist = this.x - obj.x;
+                              const laneDiff = Math.abs(this.y - obj.y);
+                              if (dist < 0 && dist > -slowDist && laneDiff < 50) {
+                                  shouldSlow = true;
+                              }
+                          }
+                      }
 
                     // Check for obstacles (building, tree, pole, cone, barrier, pothole) - only in same lane
                     for (const obj of objects) {
@@ -1036,17 +1045,17 @@
                             }
                             
                             const dx = this.x - obj.x;
-                            const dy = this.y - obj.y;
-                            const dist = Math.sqrt(dx * dx + dy * dy);
-                            const minDist = this.width + obj.width;
-                            if (dist < minDist + 100 && dist > 0 && dx < 0) {
-                                // Obstacle ahead
-                                if (dist < minDist + 20) {
-                                    shouldStop = true;
-                                } else {
-                                    shouldSlow = true;
-                                }
-                            }
+                             const dy = this.y - obj.y;
+                             const dist = Math.sqrt(dx * dx + dy * dy);
+                             const minDist = this.width + obj.width;
+                             if (dist < minDist + 80 && dist > 0 && dx < 0) {
+                                 // Obstacle ahead - start slowing from far away
+                                 if (dist < minDist + 10) {
+                                     shouldStop = true;
+                                 } else {
+                                     shouldSlow = true;
+                                 }
+                             }
                         }
                     }
 
@@ -1669,15 +1678,28 @@
                 const effectiveDistance = Math.min(dist, predictedDistance);
 
                 // Distance levels with hysteresis for stability
-                if (effectiveDistance < 90) {
-                    distanceLevel = 'CRITICAL';
-                } else if (effectiveDistance < 140) {
-                    distanceLevel = 'WARNING';
-                } else if (effectiveDistance < 170) {
-                    distanceLevel = 'MODERATE';
-                } else if (effectiveDistance < 195) {
-                    distanceLevel = 'OKAY';
-                }
+                 // Traffic lights use closer thresholds for more realistic stopping behavior
+                 if (obj.type === 'traffic light') {
+                     if (effectiveDistance < 50) {
+                         distanceLevel = 'CRITICAL';
+                     } else if (effectiveDistance < 80) {
+                         distanceLevel = 'WARNING';
+                     } else if (effectiveDistance < 120) {
+                         distanceLevel = 'MODERATE';
+                     } else if (effectiveDistance < 150) {
+                         distanceLevel = 'OKAY';
+                     }
+                 } else {
+                     if (effectiveDistance < 90) {
+                         distanceLevel = 'CRITICAL';
+                     } else if (effectiveDistance < 140) {
+                         distanceLevel = 'WARNING';
+                     } else if (effectiveDistance < 170) {
+                         distanceLevel = 'MODERATE';
+                     } else if (effectiveDistance < 195) {
+                         distanceLevel = 'OKAY';
+                     }
+                 }
 
                 // Check if object is moving towards vehicle (closing velocity)
                 const closingVelocity = obj.speed > 0 ? 'moving' : 'stationary';
@@ -1848,9 +1870,11 @@
                     const samelane = laneDiff < 50;
                     if (samelane) {
                         if (obj.lightColor === '#ff0000') {
-                            // Red light blocks forward movement but doesn't set threat level
+                            // Red light blocks forward movement only when close enough
                             // This allows the car to reverse if blocked, even at a red light
-                            redLightBlocking = true; // Flag to prevent lane changes and forward movement
+                            if (detection.distanceLevel !== 'SAFE' && detection.distanceLevel !== undefined) {
+                                redLightBlocking = true; // Flag to prevent lane changes and forward movement
+                            }
                             actions.push({
                                 type: 'CRITICAL',
                                 text: '🔴 RED LIGHT - STOP AT LINE',
