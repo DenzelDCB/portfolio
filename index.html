@@ -166,6 +166,31 @@
     </div>
   </section>
 
+  <!-- Image Lightbox Modal -->
+  <div id="image-lightbox" class="fixed inset-0 bg-black/95 z-[60] hidden flex items-center justify-center p-4" style="animation: fadeIn 0.3s ease-out">
+    <div class="relative max-w-4xl max-h-[90vh] flex items-center justify-center">
+      <img id="lightbox-image" src="" alt="Expanded view" class="max-w-full max-h-[90vh] object-contain rounded-lg">
+      <button id="close-lightbox" class="absolute top-4 right-4 w-12 h-12 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition">
+        <i class="fas fa-times text-white text-2xl"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Project Details Modal -->
+  <div id="project-details-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] flex flex-col" style="animation: slideUp 0.3s ease-out">
+      <div class="bg-gradient-to-r from-blue-600 to-blue-500 p-6 flex justify-between items-center flex-shrink-0">
+        <h3 class="text-2xl font-bold text-white" id="modal-project-title">Project Name</h3>
+        <button id="close-project-modal" class="w-10 h-10 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition flex-shrink-0">
+          <i class="fas fa-times text-white"></i>
+        </button>
+      </div>
+      <div class="p-8 space-y-6 overflow-y-auto" id="modal-content">
+        <!-- Content will be injected here -->
+      </div>
+    </div>
+  </div>
+
   <!-- Code Editor Modal -->
   <div id="code-editor-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden" style="animation: slideUp 0.3s ease-out">
@@ -324,6 +349,7 @@ console.log('Hello from Denzel\'s portfolio!');</textarea>
             <div class="flex gap-4 text-sm font-medium">
               <a href="https://ventrai.pages.dev" target="_blank" class="text-primary hover:text-primary-dark dark:text-accent transition">Live Demo →</a>
               <a href="https://github.com/Ventraiz/Ventrai" target="_blank" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition">Code</a>
+              <button class="text-primary hover:text-primary-dark dark:text-accent transition learn-more-btn" data-project="ventrai">Learn More</button>
             </div>
           </div>
         </div>
@@ -342,6 +368,7 @@ console.log('Hello from Denzel\'s portfolio!');</textarea>
             <div class="flex gap-4 text-sm font-medium">
               <a href="https://phytelix.com" target="_blank" class="text-primary hover:text-primary-dark dark:text-accent transition">Live Demo →</a>
               <a href="https://github.com/Phytellix" target="_blank" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition">Code</a>
+              <button class="text-primary hover:text-primary-dark dark:text-accent transition learn-more-btn" data-project="phytelix">Learn More</button>
             </div>
           </div>
         </div>
@@ -359,6 +386,7 @@ console.log('Hello from Denzel\'s portfolio!');</textarea>
             <div class="flex gap-4 text-sm font-medium">
               <a href="https://url-s.pages.dev" target="_blank" class="text-primary hover:text-primary-dark dark:text-accent transition">Live Demo →</a>
               <a href="https://github.com/DenzelDCB/portfolio/blob/main/url_shortner.html" target="_blank" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition">Code</a>
+              <button class="text-primary hover:text-primary-dark dark:text-accent transition learn-more-btn" data-project="urlshortener">Learn More</button>
             </div>
           </div>
         </div>
@@ -375,6 +403,7 @@ console.log('Hello from Denzel\'s portfolio!');</textarea>
             </div>
             <div class="flex gap-4 text-sm font-medium">
               <a href="https://www.wupstem.org/wp-content/uploads/2024/03/SCORES_WUP-STEM-Fair_2024-Scoring-Sheet-1.pdf" target="_blank" class="text-primary hover:text-primary-dark dark:text-accent transition">View Results (no. 102) →</a>
+              <button class="text-primary hover:text-primary-dark dark:text-accent transition learn-more-btn" data-project="submarine">Learn More</button>
             </div>
           </div>
         </div>
@@ -393,6 +422,7 @@ console.log('Hello from Denzel\'s portfolio!');</textarea>
             <div class="flex gap-4 text-sm font-medium">
               <a href="https://denzeldcb.github.io/portfolio/driving_simulator" target="_blank" class="text-primary hover:text-primary-dark dark:text-accent transition">Live Demo →</a>
               <a href="https://github.com/DenzelDCB/portfolio/blob/main/driving_simulator.html" target="_blank" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition">Code</a>
+              <button class="text-primary hover:text-primary-dark dark:text-accent transition learn-more-btn" data-project="selfdriving">Learn More</button>
             </div>
           </div>
         </div>
@@ -560,10 +590,284 @@ console.log('Hello from Denzel\'s portfolio!');</textarea>
       });
     });
 
+    // Project Details Data
+    const projectDetails = {
+      ventrai: {
+        title: 'Ventrai',
+        images: [
+          'ventrai-1.png',
+          'ventrai-2.png'
+        ],
+        description: 'A mentorship platform connecting experienced professionals with aspiring learners, facilitating knowledge transfer and career growth through meaningful relationships and guided learning paths.',
+        technologies: {
+          languages: 'JavaScript',
+          frameworks: 'React, Node.js',
+          tools: 'Firebase'
+        },
+        features: [
+          'User authentication and profile management',
+          'Mentorship matching algorithm',
+          'Real-time messaging and notifications'
+        ],
+        learned: [
+          'Full-stack React and Node.js development',
+          'Real-time database integration with Firebase',
+          'User experience design for social platforms'
+        ],
+        howToRun: [
+          'Visit the live site',
+          'Create an account',
+          'Connect with your mentors and mentees',
+          'Give feedback in the community page'
+        ],
+        futureImprovements: [
+          'Video conferencing integration',
+          'Progress tracking and goal setting'
+        ]
+      },
+      phytelix: {
+        title: 'Phytelix',
+        images: [
+          'phytelix-1.png',
+          'phytelix-2.png'
+        ],
+        description: 'Agricultural technology platform providing farmers with digital tools to optimize crop yields, monitor soil health, and increase income through data-driven decision making.',
+        technologies: {
+          languages: 'JavaScript',
+          frameworks: 'HTML5, CSS3',
+          tools: 'Web APIs'
+        },
+        features: [
+          'Crop management dashboard',
+          'Weather integration',
+          'Yield prediction tools'
+        ],
+        learned: [
+          'Building responsive web applications',
+          'Agricultural domain knowledge',
+          'Third-party API integration'
+        ],
+        howToRun: [
+          'Visit the live site',
+          'Create an account with your farm details',
+          'Configure your crops and location',
+          'View dashboard and recommendations'
+        ],
+        futureImprovements: [
+          'Mobile app development',
+          'IoT sensor integration'
+        ]
+      },
+      urlshortener: {
+        title: 'URL Shortener',
+        images: [
+          'url-short-1.png',
+          'url-short-2.png'
+        ],
+        description: 'Efficient link management tool for creating shortened, shareable URLs with tracking capabilities to monitor clicks and engagement metrics.',
+        technologies: {
+          languages: 'JavaScript',
+          frameworks: 'Vanilla JavaScript',
+          tools: 'REST API'
+        },
+        features: [
+          'URL shortening with custom aliases',
+          'Click tracking and analytics',
+          'QR code generation'
+        ],
+        learned: [
+          'RESTful API design principles',
+          'URL encoding and shortening algorithms',
+          'Analytics implementation'
+        ],
+        howToRun: [
+          'Visit the live demo',
+          'Paste your long URL',
+          'Click to generate shortened URL',
+          'Share and track clicks'
+        ],
+        futureImprovements: [
+          'User accounts and URL history',
+          'Advanced analytics dashboard'
+        ]
+      },
+      submarine: {
+        title: 'Bottle Submarine',
+        images: [
+          'bottle-1.jpg',
+          'bottle-2.png'
+        ],
+        description: 'Award-winning STEM fair project demonstrating practical principles of buoyancy, physics, and engineering design through an innovative hands-on submarine model.',
+        technologies: {
+          materials: 'Plastic bottle, tubing, weights',
+          disciplines: 'Physics, Engineering',
+          tools: 'Design and prototyping'
+        },
+        features: [
+          'Buoyancy control mechanism',
+          'Pressure equilibrium system',
+          'Depth management'
+        ],
+        learned: [
+          'Physics of buoyancy and pressure',
+          'Engineering problem-solving',
+          'Presentation and documentation skills'
+        ],
+        howToRun: [
+          'Gather materials (bottle, tubing, weights)',
+          'Assemble the submarine structure',
+          'Test in a water tank or pool',
+          'Adjust weights for optimal buoyancy'
+        ],
+        futureImprovements: [
+          'Add camera for underwater exploration',
+          'Remote control capabilities'
+        ]
+      },
+      selfdriving: {
+        title: 'Self-Driving Car',
+        images: [
+          'car-1.png',
+          'car-2.png'
+        ],
+        description: 'Interactive AI Self-Driving Car Simulator providing an educational experience on how autonomous vehicles perceive and navigate their environment using neural networks.',
+        technologies: {
+          languages: 'JavaScript',
+          frameworks: 'HTML5 Canvas',
+          tools: 'Neural Networks, Physics simulation'
+        },
+        features: [
+          'Real-time neural network-based decision making',
+          'Sensor simulation and obstacle detection',
+          'Training and learning visualization'
+        ],
+        learned: [
+          'Neural network fundamentals',
+          'Physics-based game simulation',
+          'AI algorithm visualization'
+        ],
+        howToRun: [
+          'Visit the live demo link',
+          'Watch the car learn to navigate',
+          'Observe training progress in real-time',
+          'Interact with the simulation controls'
+        ],
+        futureImprovements: [
+          'Complex traffic scenarios',
+          'Machine learning model export and sharing'
+        ]
+      }
+    };
+
+    function renderProjectModal(projectKey) {
+      const project = projectDetails[projectKey];
+      const modal = document.getElementById('project-details-modal');
+      const title = document.getElementById('modal-project-title');
+      const content = document.getElementById('modal-content');
+      
+      title.textContent = project.title;
+      
+      let html = `
+        <div class="grid grid-cols-2 gap-4 mb-4">
+          <img src="${project.images[0]}" alt="${project.title} 1" class="w-full h-40 object-cover rounded-lg cursor-pointer hover:opacity-80 transition expand-image">
+          <img src="${project.images[1]}" alt="${project.title} 2" class="w-full h-40 object-cover rounded-lg cursor-pointer hover:opacity-80 transition expand-image">
+        </div>
+        
+        <div>
+          <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">🚀 Description</h4>
+          <p class="text-gray-600 dark:text-gray-400 leading-relaxed">${project.description}</p>
+        </div>
+        
+        <div>
+          <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">🛠️ Technologies Used</h4>
+          <ul class="text-gray-600 dark:text-gray-400 space-y-1">
+      `;
+      
+      for (const [key, value] of Object.entries(project.technologies)) {
+        const label = key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1');
+        html += `<li>- <strong>${label}:</strong> ${value}</li>`;
+      }
+      
+      html += `
+          </ul>
+        </div>
+        
+        <div>
+          <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">✨ Features</h4>
+          <ul class="text-gray-600 dark:text-gray-400 space-y-1">
+      `;
+      
+      project.features.forEach(feature => {
+        html += `<li>- ${feature}</li>`;
+      });
+      
+      html += `
+          </ul>
+        </div>
+        
+        <div>
+          <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">🧠 What I Learned</h4>
+          <ul class="text-gray-600 dark:text-gray-400 space-y-1">
+      `;
+      
+      project.learned.forEach(item => {
+        html += `<li>- ${item}</li>`;
+      });
+      
+      html += `
+          </ul>
+        </div>
+        
+        <div>
+          <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">▶️ How to Run</h4>
+          <ol class="text-gray-600 dark:text-gray-400 space-y-1">
+      `;
+      
+      project.howToRun.forEach((step, index) => {
+        html += `<li>${index + 1}. ${step}</li>`;
+      });
+      
+      html += `
+          </ol>
+        </div>
+        
+        <div>
+          <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">📌 Future Improvements</h4>
+          <ul class="text-gray-600 dark:text-gray-400 space-y-1">
+      `;
+      
+      project.futureImprovements.forEach(improvement => {
+        html += `<li>- ${improvement}</li>`;
+      });
+      
+      html += `</ul>
+        </div>
+      `;
+      
+      content.innerHTML = html;
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      
+      // Add click handlers to expand images
+      document.querySelectorAll('.expand-image').forEach(img => {
+        img.addEventListener('click', (e) => {
+          const lightbox = document.getElementById('image-lightbox');
+          const lightboxImg = document.getElementById('lightbox-image');
+          lightboxImg.src = e.target.src;
+          lightbox.classList.remove('hidden');
+          lightbox.classList.add('flex');
+        });
+      });
+    }
+
     // Hidden Computers Game
     let foundComputers = new Set();
     const totalComputers = 7;
     const codeEditorModal = document.getElementById('code-editor-modal');
+    const projectDetailsModal = document.getElementById('project-details-modal');
+    const closeProjectModal = document.getElementById('close-project-modal');
+    const imageLightbox = document.getElementById('image-lightbox');
+    const closeLightbox = document.getElementById('close-lightbox');
     const closeEditor = document.getElementById('close-editor');
     const runCodeBtn = document.getElementById('run-code');
     const clearConsoleBtn = document.getElementById('clear-console');
@@ -675,6 +979,38 @@ console.log('Hello from Denzel\'s portfolio!');</textarea>
       codeEditorModal.classList.remove('hidden');
       codeEditorModal.classList.add('flex');
     }
+
+    // Learn More Buttons
+    document.querySelectorAll('.learn-more-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const projectKey = btn.getAttribute('data-project');
+        renderProjectModal(projectKey);
+      });
+    });
+
+    closeProjectModal.addEventListener('click', () => {
+      projectDetailsModal.classList.add('hidden');
+      projectDetailsModal.classList.remove('flex');
+    });
+
+    projectDetailsModal.addEventListener('click', (e) => {
+      if (e.target === projectDetailsModal) {
+        projectDetailsModal.classList.add('hidden');
+        projectDetailsModal.classList.remove('flex');
+      }
+    });
+
+    closeLightbox.addEventListener('click', () => {
+      imageLightbox.classList.add('hidden');
+      imageLightbox.classList.remove('flex');
+    });
+
+    imageLightbox.addEventListener('click', (e) => {
+      if (e.target === imageLightbox) {
+        imageLightbox.classList.add('hidden');
+        imageLightbox.classList.remove('flex');
+      }
+    });
 
     closeEditor.addEventListener('click', () => {
       codeEditorModal.classList.add('hidden');
