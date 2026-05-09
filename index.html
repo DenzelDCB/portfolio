@@ -528,18 +528,18 @@
         /* Tablet and smaller screens */
         @media (max-height: 900px) and (max-width: 1024px), (max-width: 768px) {
             .nav-dock {
-                display: none;
+                display: none !important;
             }
 
             .hamburger-menu {
-                display: flex;
+                display: flex !important;
             }
         }
 
         /* Large desktop */
         @media (min-height: 901px) and (min-width: 1025px) {
             .hamburger-menu {
-                display: none;
+                display: none !important;
             }
 
             .mobile-nav-menu {
@@ -547,7 +547,7 @@
             }
 
             .nav-dock {
-                display: flex;
+                display: flex !important;
             }
         }
     </style>
