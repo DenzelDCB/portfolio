@@ -2672,16 +2672,6 @@ console.log('Hello from Denzel\'s portfolio!');</textarea>
                 localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
             });
         }
-
-        // Keep existing theme toggle functionality for desktop
-        const themeToggle = document.getElementById('theme-toggle');
-        if (themeToggle) {
-            themeToggle.addEventListener('click', () => {
-                const html = document.documentElement;
-                html.classList.toggle('dark');
-                localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
-            });
-        }
     </script>
 </body>
 
