@@ -70,7 +70,7 @@
   .container-narrow{ max-width:1280px; margin:0 auto; }
 
   .eyebrow{
-    font-family:var(--mono); font-size:0.74rem; letter-spacing:0.02em; text-transform:none;
+    font-family:var(--mono); font-size:1rem; letter-spacing:0.02em; text-transform:none;
     color:var(--primary); display:flex; align-items:center; gap:0.55rem;
   }
   .eyebrow::before{ content:'//'; color:var(--secondary); font-weight:600; }
@@ -448,6 +448,17 @@
     <h2 style="font-size:clamp(1.9rem,3.2vw,2.7rem); font-weight:600; margin:1rem 0 0;">Five products. One throughline: technology that teaches.</h2>
 
     <div id="project-list" style="margin-top:2rem;">
+
+      <div class="project-row reveal">
+        <div class="project-visual win">
+          <div class="win-bar" style="background:#0f172a;"><span class="win-dot"></span><span class="win-dot"></span><span class="win-dot"></span><span class="win-name" style="color:#93c5fd;">av-sim.js</span></div>
+          <div class="project-canvas" style="background:linear-gradient(155deg,#2563EB,#0F172A);">
+            <div class="iframe-wrapper" style="background-image:url('https://api.miniature.io/screenshot?url=https://denzeldcb.github.io/portfolio/driving_simulator&width=1200&height=750');">
+              <iframe src="https://denzeldcb.github.io/portfolio/driving_simulator" loading="lazy"></iframe>
+              <!-- <div class="iframe-cover"></div> -->
+            </div>         
+          </div>
+        </div>
         <div>
           <span class="project-tag">ai simulation</span>
           <h3 class="project-title">Self-Driving Car Simulator</h3>
@@ -457,17 +468,8 @@
           <div class="project-impact">↳ Teaching AI and automation concepts through a system learners can drive.</div>
         </div>
       </div>
+
       <div class="project-row reveal">
-        <div class="project-visual win">
-          <div class="win-bar" style="background:#1e3a8a;"><span class="win-dot"></span><span class="win-dot"></span><span class="win-dot"></span><span class="win-name" style="color:#bfdbfe;">ventrai.pages.dev</span></div>
-          <div class="project-canvas" style="background:#fff;">
-            <div class="iframe-wrapper" style="background-image:url('https://api.miniature.io/screenshot?url=https://ventrai.pages.dev&width=1200&height=750');">
-              <iframe src="https://ventrai.pages.dev" loading="lazy"></iframe>
-              <!-- <div class="iframe-cover"></div> -->
-            </div>
-          </div>
-        </div>
-        <div class="project-row reveal">
         <div class="project-visual win">
           <div class="win-bar" style="background:#0e9228;"><span class="win-dot"></span><span class="win-dot"></span><span class="win-dot"></span><span class="win-name" style="color:#8afd99;">phytelix.com</span></div>
           <div class="project-canvas" style="background:#fff;">
@@ -488,6 +490,7 @@
           <div class="project-impact">↳ Supporting agricultural innovation with practical, low-barrier tools.</div>
         </div>
       </div>
+      
       <div class="project-row reveal">
         <div class="project-visual win">
           <div class="win-bar" style="background:#4c065f;"><span class="win-dot"></span><span class="win-dot"></span><span class="win-dot"></span><span class="win-name" style="color:#cea7f3;">pylernen.org</span></div>
@@ -509,14 +512,15 @@
           <div class="project-impact">↳ Making coding education engaging, age-appropriate, and accessible.</div>
         </div>
       </div>
+      
       <div class="project-row reveal">
         <div class="project-visual win">
-          <div class="win-bar" style="background:#0f172a;"><span class="win-dot"></span><span class="win-dot"></span><span class="win-dot"></span><span class="win-name" style="color:#93c5fd;">av-sim.js</span></div>
-          <div class="project-canvas" style="background:linear-gradient(155deg,#2563EB,#0F172A);">
-            <div class="iframe-wrapper" style="background-image:url('https://api.miniature.io/screenshot?url=https://denzeldcb.github.io/portfolio/driving_simulator&width=1200&height=750');">
-              <iframe src="https://denzeldcb.github.io/portfolio/driving_simulator" loading="lazy"></iframe>
+          <div class="win-bar" style="background:#1e3a8a;"><span class="win-dot"></span><span class="win-dot"></span><span class="win-dot"></span><span class="win-name" style="color:#bfdbfe;">ventrai.pages.dev</span></div>
+          <div class="project-canvas" style="background:#fff;">
+            <div class="iframe-wrapper" style="background-image:url('https://api.miniature.io/screenshot?url=https://ventrai.pages.dev&width=1200&height=750');">
+              <iframe src="https://ventrai.pages.dev" loading="lazy"></iframe>
               <!-- <div class="iframe-cover"></div> -->
-            </div>         
+            </div>
           </div>
         </div>
         <div>
@@ -530,6 +534,7 @@
           <div class="project-impact">↳ Helping learners access mentorship and guidance they wouldn't otherwise have.</div>
         </div>
       </div>
+      
       <div class="project-row reveal">
         <div class="project-visual win">
           <div class="win-bar" style="background:#92400e;"><span class="win-dot"></span><span class="win-dot"></span><span class="win-dot"></span><span class="win-name" style="color:#fde68a;">submarine.ino</span></div>
