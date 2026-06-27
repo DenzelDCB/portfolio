@@ -70,7 +70,7 @@
   .container-narrow{ max-width:1280px; margin:0 auto; }
 
   .eyebrow{
-    font-family:var(--mono); font-size:1rem; letter-spacing:0.02em; text-transform:none;
+    font-family:var(--mono); font-size:1.3rem; letter-spacing:0.02em; text-transform:none;
     color:var(--primary); display:flex; align-items:center; gap:0.55rem;
   }
   .eyebrow::before{ content:'//'; color:var(--secondary); font-weight:600; }
@@ -84,7 +84,7 @@
 
   .btn-primary{
     font-family:var(--body-f); font-weight:600; font-size:0.95rem;
-    padding:0.85rem 1.6rem; border-radius:10px; background:var(--ink-0); color:#fff;
+    padding:0.85rem 2rem; border-radius:10px; background:var(--ink-0); color:#fff;
     display:inline-flex; align-items:center; gap:0.55rem; border:1px solid var(--ink-0);
     transition:transform .3s cubic-bezier(.2,.8,.2,1), background .3s ease, color .3s ease;
   }
@@ -113,11 +113,11 @@
     padding:1.2rem 6vw; background:rgba(255,255,255,0.82); backdrop-filter:blur(10px);
     border-bottom:1px solid var(--line); transition:padding .3s ease;
   }
-  #nav .logo{ font-family:var(--mono); font-weight:500; font-size:1rem; }
+  #nav .logo{ font-family:var(--mono); font-weight:500; font-size:2rem; }
   #nav .logo .logo-dot{ color:var(--primary); }
-  #nav nav{ display:flex; gap:2.1rem; }
+  #nav nav{ display:flex; gap:1rem; }
   #nav nav a{
-    font-size:0.87rem; font-weight:500; color:var(--ink-1); text-decoration:none;
+    font-size:1rem; font-weight:500; color:var(--ink-1); text-decoration:none;
     position:relative; opacity:0.72; transition:opacity .2s ease;
   }
   #nav nav a:hover{ opacity:1; }
@@ -163,7 +163,7 @@
 
   .scroll-cue{
     position:absolute; bottom:2.2rem; left:6vw; display:flex; align-items:center; gap:0.7rem;
-    font-family:var(--mono); font-size:1rem; color:#64748b; z-index:2;
+    font-family:var(--mono); font-size:2rem; color:#64748b; z-index:2;
   }
   .scroll-cue .line{ width:1px; height:30px; background:linear-gradient(180deg, var(--primary), transparent); animation:scrollpulse 2s ease-in-out infinite; }
   @keyframes scrollpulse{ 0%,100%{opacity:.25;} 50%{opacity:1;} }
@@ -407,7 +407,7 @@
       </div>
     </div>
   </div>
-  <div class="scroll-cue"><span class="line"></span> scroll</div>
+  <!-- <div class="scroll-cue"><span class="line"></span> scroll</div> -->
 </section>
 
 <!-- ============ IMPACT (terminal) ============ -->
